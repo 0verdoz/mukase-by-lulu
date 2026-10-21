@@ -1,0 +1,6 @@
+{
+  "name": "Mukase by Lulu - Authentic West African Kitchen",
+  "description": "Artisanal Ghanaian & West African cuisine ordering, seamless WhatsApp and iMessage conversational checkout, unique order verification, and real-time delivery tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
