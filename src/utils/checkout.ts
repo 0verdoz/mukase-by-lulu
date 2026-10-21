@@ -22,10 +22,6 @@ export function formatOrderMessage(order: Order): string {
 
   let itemDetails = '';
   items.forEach((item, index) => {
-<<<<<<< HEAD
-    itemDetails += `${index + 1}. *${item.quantity}x ${item.menuItem.name}* — $${item.itemTotalPrice.toFixed(2)}\n`;
-    if (item.customization) {
-=======
     const isOffMenu = item.customization?.isOffMenuCustom;
     const title = isOffMenu && item.customization?.offMenuDishName
       ? `[CUSTOM CHEF SPECIAL] ${item.customization.offMenuDishName}`
@@ -36,7 +32,6 @@ export function formatOrderMessage(order: Order): string {
       if (item.customization.selectedSideOrSwallow) {
         itemDetails += `   • Side/Swallow: ${item.customization.selectedSideOrSwallow}\n`;
       }
->>>>>>> main
       if (item.customization.protein) {
         itemDetails += `   • Protein: ${item.customization.protein} ${item.customization.proteinExtraPrice > 0 ? `(+$${item.customization.proteinExtraPrice.toFixed(2)})` : ''}\n`;
       }
@@ -45,10 +40,6 @@ export function formatOrderMessage(order: Order): string {
         const addOnsStr = item.customization.selectedAddOns.map(a => `${a.name} (+$${a.price.toFixed(2)})`).join(', ');
         itemDetails += `   • Add-ons: ${addOnsStr}\n`;
       }
-<<<<<<< HEAD
-      if (item.customization.specialInstructions) {
-        itemDetails += `   • Note: "${item.customization.specialInstructions}"\n`;
-=======
       if (item.customization.customizationFee && item.customization.customizationFee > 0) {
         itemDetails += `   • Custom Prep Surcharge: +$${item.customization.customizationFee.toFixed(2)}\n`;
       }
@@ -57,7 +48,6 @@ export function formatOrderMessage(order: Order): string {
       }
       if (item.customization.specialInstructions) {
         itemDetails += `   • Kitchen Note: "${item.customization.specialInstructions}"\n`;
->>>>>>> main
       }
     }
   });

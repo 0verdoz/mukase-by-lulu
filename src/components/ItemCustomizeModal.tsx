@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
-import { X, Plus, Minus, Check, Flame, ShieldAlert } from 'lucide-react';
-=======
 import { X, Plus, Minus, Check, Flame, Sparkles, ChefHat, Info } from 'lucide-react';
->>>>>>> main
 import { CustomizationOption, MenuItem, SpiceLevel } from '../types';
 import { useOrder } from '../context/OrderContext';
 
@@ -15,22 +11,13 @@ interface Props {
 const SPICE_LEVELS: { level: SpiceLevel; label: string; desc: string }[] = [
   { level: 'Mild', label: 'Mild', desc: 'Gentle warmth, family-friendly' },
   { level: 'Medium', label: 'Medium', desc: 'Noticeable scotch bonnet kick' },
-<<<<<<< HEAD
-  { level: 'Hot (Traditional)', label: 'Traditional Hot', desc: 'Authentic Ghanaian street level heat' },
-=======
   { level: 'Hot (Traditional)', label: 'Traditional Hot', desc: 'Authentic Ghanaian street heat' },
->>>>>>> main
   { level: 'Extra Fiery Shito', label: 'Extra Fiery Shito', desc: 'Double shito & fresh ground pepper' },
 ];
 
 export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
   const { addToCart } = useOrder();
 
-<<<<<<< HEAD
-  const [selectedProtein, setSelectedProtein] = useState<string>(
-    item.proteinOptions && item.proteinOptions.length > 0 ? item.proteinOptions[0].name : ''
-  );
-=======
   const isOffMenuSpecial = item.id === 'chef-off-menu-request';
 
   // Side / Swallow choice
@@ -43,14 +30,11 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
     item.proteinOptions && item.proteinOptions.length > 0 ? item.proteinOptions[0].name : ''
   );
 
->>>>>>> main
   const [selectedSpiceLevel, setSelectedSpiceLevel] = useState<SpiceLevel>('Medium');
   const [selectedAddOns, setSelectedAddOns] = useState<CustomizationOption[]>([]);
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [quantity, setQuantity] = useState(1);
 
-<<<<<<< HEAD
-=======
   // Off-menu custom fields
   const [isOffMenuCustom, setIsOffMenuCustom] = useState(isOffMenuSpecial);
   const [offMenuDishName, setOffMenuDishName] = useState(
@@ -65,7 +49,6 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
   const sideObj = item.sidesOptions?.find(s => s.name === selectedSide);
   const sideExtra = sideObj ? sideObj.extraPrice : 0;
 
->>>>>>> main
   // Compute protein extra
   const proteinObj = item.proteinOptions?.find(p => p.name === selectedProtein);
   const proteinExtra = proteinObj ? proteinObj.extraPrice : 0;
@@ -74,11 +57,7 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
   const addOnsTotal = selectedAddOns.reduce((sum, addOn) => sum + addOn.price, 0);
 
   // Single unit price
-<<<<<<< HEAD
-  const unitPrice = item.price + proteinExtra + addOnsTotal;
-=======
   const unitPrice = item.price + sideExtra + proteinExtra + addOnsTotal + customPrepFee;
->>>>>>> main
   const totalPrice = unitPrice * quantity;
 
   const toggleAddOn = (addOn: CustomizationOption) => {
@@ -96,13 +75,6 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
     addToCart(
       item,
       {
-<<<<<<< HEAD
-        protein: selectedProtein || undefined,
-        proteinExtraPrice: proteinExtra,
-        spiceLevel: selectedSpiceLevel,
-        selectedAddOns,
-        specialInstructions: specialInstructions.trim() || undefined,
-=======
         selectedSideOrSwallow: selectedSide || undefined,
         protein: selectedProtein || undefined,
         proteinExtraPrice: proteinExtra + sideExtra,
@@ -113,7 +85,6 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
         offMenuDishName: (isOffMenuSpecial || isOffMenuCustom) ? offMenuDishName.trim() : undefined,
         offMenuDetails: (isOffMenuSpecial || isOffMenuCustom) ? offMenuDetails.trim() : undefined,
         customizationFee: customPrepFee,
->>>>>>> main
       },
       quantity
     );
@@ -123,11 +94,7 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div 
-<<<<<<< HEAD
-        className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden my-8 max-h-[90vh] flex flex-col"
-=======
         className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-stone-200 overflow-hidden my-8 max-h-[92vh] flex flex-col"
->>>>>>> main
         onClick={e => e.stopPropagation()}
       >
         {/* Header with image */}
@@ -149,8 +116,6 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
           </button>
 
           <div className="absolute bottom-3 left-4 right-4 text-white">
-<<<<<<< HEAD
-=======
             <div className="flex items-center gap-2 mb-1">
               {item.tag && (
                 <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-600/90 text-white">
@@ -163,7 +128,6 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
                 </span>
               )}
             </div>
->>>>>>> main
             <h3 className="text-xl sm:text-2xl font-bold font-display">{item.name}</h3>
             <p className="text-xs sm:text-sm text-stone-200 line-clamp-1">{item.description}</p>
           </div>
@@ -172,9 +136,6 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
         {/* Scrollable Customization Content */}
         <div className="p-5 sm:p-6 space-y-6 overflow-y-auto flex-1">
           
-<<<<<<< HEAD
-          {/* Protein Selection */}
-=======
           {/* Notice about extra fee on custom foods */}
           <div className="p-3 bg-amber-50 rounded-xl border border-amber-200/80 text-xs text-amber-950 flex items-start gap-2">
             <Info className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
@@ -267,20 +228,13 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
           )}
 
           {/* Protein Selection / Upgrade */}
->>>>>>> main
           {item.proteinOptions && item.proteinOptions.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-stone-900 font-display">
-<<<<<<< HEAD
-                  1. Choice of Protein <span className="text-amber-700">*</span>
-                </label>
-                <span className="text-xs text-stone-500">Select one</span>
-=======
                   {item.sidesOptions ? '2. Meat / Protein Upgrade' : '1. Protein Choice'}
                 </label>
                 <span className="text-xs text-stone-500">Custom options</span>
->>>>>>> main
               </div>
 
               <div className="space-y-2">
@@ -305,11 +259,7 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
                         >
                           {isSelected && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                         </div>
-<<<<<<< HEAD
-                        <span>{protein.name}</span>
-=======
                         <span className="text-xs font-semibold">{protein.name}</span>
->>>>>>> main
                       </div>
                       <span className="text-xs font-semibold tabular-nums text-stone-600">
                         {protein.extraPrice > 0 ? `+$${protein.extraPrice.toFixed(2)}` : 'Included'}
@@ -326,15 +276,9 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
             <div className="flex items-center justify-between">
               <label className="text-sm font-bold text-stone-900 font-display flex items-center gap-1.5">
                 <Flame className="w-4 h-4 text-amber-600" />
-<<<<<<< HEAD
-                <span>2. Spice Heat Level</span>
-              </label>
-              <span className="text-xs text-stone-500">Accra heat scale</span>
-=======
                 <span>Spice Heat Level</span>
               </label>
               <span className="text-xs text-stone-500">Accra scotch bonnet scale</span>
->>>>>>> main
             </div>
 
             <div className="grid grid-cols-2 gap-2">
@@ -364,11 +308,7 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-stone-900 font-display">
-<<<<<<< HEAD
-                  3. Delicious Add-Ons & Sides
-=======
                   Custom Add-Ons & Sides (Extra Fee)
->>>>>>> main
                 </label>
                 <span className="text-xs text-stone-500">Optional</span>
               </div>
@@ -395,11 +335,7 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
                         >
                           {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
                         </div>
-<<<<<<< HEAD
-                        <span>{addOn.name}</span>
-=======
                         <span className="text-xs font-semibold">{addOn.name}</span>
->>>>>>> main
                       </div>
                       <span className="text-xs font-semibold tabular-nums text-amber-800">
                         +${addOn.price.toFixed(2)}
@@ -411,12 +347,6 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
             </div>
           )}
 
-<<<<<<< HEAD
-          {/* Special Instructions Note */}
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-stone-900 font-display">
-              Special Kitchen Notes
-=======
           {/* Toggle for Custom Request outside menu if on a regular dish */}
           {!isOffMenuSpecial && (
             <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
@@ -453,17 +383,12 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
           <div className="space-y-2">
             <label className="text-sm font-bold text-stone-900 font-display">
               Special Kitchen Instructions
->>>>>>> main
             </label>
             <input
               type="text"
               value={specialInstructions}
               onChange={e => setSpecialInstructions(e.target.value)}
-<<<<<<< HEAD
-              placeholder="e.g., extra spicy shito on the side, well done plantains, no onions"
-=======
               placeholder="e.g. extra spicy shito on the side, well-done plantains, no onions"
->>>>>>> main
               className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-600 placeholder:text-stone-400"
             />
           </div>

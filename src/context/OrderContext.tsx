@@ -2,8 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CartItem, CustomerDetails, MenuItem, Order, OrderStatus, SelectedCustomization, ChatMessage } from '../types';
 import { generateOrderCode } from '../utils/checkout';
 import { analyzePaymentProof, registerTransactionId } from '../utils/fraudVerification';
-<<<<<<< HEAD
-=======
 import {
   fetchRemoteOrders,
   pushRemoteOrder,
@@ -11,7 +9,6 @@ import {
   submitRemotePaymentProof,
   subscribeToSyncStream,
 } from '../services/orderApi';
->>>>>>> main
 
 const STORAGE_KEY_ORDERS = 'mukase_orders_list';
 const STORAGE_KEY_CART = 'mukase_cart_items';
@@ -51,13 +48,8 @@ interface OrderContextType {
   setIsChatOpen: (open: boolean) => void;
 
   // View state switches
-<<<<<<< HEAD
-  currentView: 'menu' | 'track' | 'kitchen';
-  setCurrentView: (view: 'menu' | 'track' | 'kitchen') => void;
-=======
   currentView: 'menu' | 'story' | 'track' | 'kitchen';
   setCurrentView: (view: 'menu' | 'story' | 'track' | 'kitchen') => void;
->>>>>>> main
   trackingOrderId: string;
   setTrackingOrderId: (id: string) => void;
 
@@ -68,8 +60,6 @@ interface OrderContextType {
   setCustomizingItem: (item: MenuItem | null) => void;
   orderConfirmationModal: Order | null;
   setOrderConfirmationModal: (order: Order | null) => void;
-<<<<<<< HEAD
-=======
 
   // Privacy & Terms Modal
   legalModalState: { isOpen: boolean; tab: 'privacy' | 'terms' };
@@ -79,7 +69,6 @@ interface OrderContextType {
   // Kitchen Story Modal
   isStoryOpen: boolean;
   setIsStoryOpen: (open: boolean) => void;
->>>>>>> main
 }
 
 const DEFAULT_CUSTOMER: CustomerDetails = {
@@ -114,27 +103,6 @@ const INITIAL_DEMO_ORDERS: Order[] = [
       {
         id: 'c-1',
         menuItem: {
-<<<<<<< HEAD
-          id: 'muk-jollof-platter',
-          name: 'Smoky Party Jollof Platter',
-          category: 'jollof',
-          price: 18.50,
-          description: 'Long-grain aromatic rice simmered in slow-roasted plum tomatoes...',
-          image: '/src/assets/images/hero_mukase_jollof_1792175369150.jpg',
-        },
-        quantity: 2,
-        customization: {
-          protein: 'Grilled Spicy Peri-Peri Chicken (Quarter)',
-          proteinExtraPrice: 0,
-          spiceLevel: 'Hot (Traditional)',
-          selectedAddOns: [
-            { id: 'add-egg', name: 'Boiled Egg with Pepper Salt', price: 1.50 },
-            { id: 'add-sausage', name: 'Grilled Spicy Beef Sausage', price: 2.50 },
-          ],
-          specialInstructions: 'Extra spicy shito on the side please',
-        },
-        itemTotalPrice: 45.00,
-=======
           id: 'jollof-goat',
           name: 'Jollof with Goat Meat',
           category: 'jollof',
@@ -154,28 +122,10 @@ const INITIAL_DEMO_ORDERS: Order[] = [
           specialInstructions: 'Extra spicy shito on the side please',
         },
         itemTotalPrice: 35.00,
->>>>>>> main
       },
       {
         id: 'c-2',
         menuItem: {
-<<<<<<< HEAD
-          id: 'muk-sobolo',
-          name: 'Chilled Artisanal Sobolo / Bissap (16 oz)',
-          category: 'drinks',
-          price: 5.50,
-          description: 'Handcrafted spiced hibiscus herbal beverage...',
-          image: '/src/assets/images/food_sobolo_beverage_1792175370850.jpg',
-        },
-        quantity: 2,
-        itemTotalPrice: 11.00,
-      },
-    ],
-    subtotal: 56.00,
-    deliveryFee: 4.99,
-    tax: 4.88,
-    total: 65.87,
-=======
           id: 'fried-yam-wings',
           name: 'Fried Yam with Wings',
           category: 'yam-cassava',
@@ -191,7 +141,6 @@ const INITIAL_DEMO_ORDERS: Order[] = [
     deliveryFee: 4.99,
     tax: 4.40,
     total: 64.39,
->>>>>>> main
     status: 'out_for_delivery',
     paymentProof: {
       method: 'cashapp',
@@ -202,11 +151,7 @@ const INITIAL_DEMO_ORDERS: Order[] = [
       isVerified: true,
       memoMatched: true,
       duplicateDetected: false,
-<<<<<<< HEAD
-      verificationNotes: 'Memo MUK-4821 matched CashApp transfer. Confirmed $65.87.',
-=======
       verificationNotes: 'Memo MUK-4821 matched CashApp transfer. Confirmed $64.39.',
->>>>>>> main
     },
     estimatedDeliveryMinutes: 12,
     riderName: 'Kwame Asante',
@@ -231,32 +176,6 @@ const INITIAL_DEMO_ORDERS: Order[] = [
       {
         id: 'c-3',
         menuItem: {
-<<<<<<< HEAD
-          id: 'muk-waakye-bowl',
-          name: "Lulu's Special Waakye Bowl",
-          category: 'bowls',
-          price: 20.00,
-          description: 'Traditional Ghanaian rice and black-eyed peas...',
-          image: '/src/assets/images/food_waakye_special_1792175369117.jpg',
-        },
-        quantity: 1,
-        customization: {
-          protein: 'Slow-Braised Tender Beef Chuck',
-          proteinExtraPrice: 2.50,
-          spiceLevel: 'Hot (Traditional)',
-          selectedAddOns: [
-            { id: 'add-kelewele', name: 'Extra Kelewele (Fried Plantain)', price: 3.50 },
-          ],
-          specialInstructions: 'Extra gari foto if possible!',
-        },
-        itemTotalPrice: 26.00,
-      },
-    ],
-    subtotal: 26.00,
-    deliveryFee: 4.99,
-    tax: 2.48,
-    total: 33.47,
-=======
           id: 'banku-okro-soup',
           name: 'Banku with Okro Soup',
           category: 'banku-fufu',
@@ -281,7 +200,6 @@ const INITIAL_DEMO_ORDERS: Order[] = [
     deliveryFee: 4.99,
     tax: 2.72,
     total: 41.71,
->>>>>>> main
     status: 'preparing_in_kitchen',
     paymentProof: {
       method: 'zelle',
@@ -303,16 +221,6 @@ const INITIAL_CHAT_MESSAGES: ChatMessage[] = [
   {
     id: 'msg-1',
     sender: 'bot',
-<<<<<<< HEAD
-    text: "Akwaaba! 🇬🇭 Welcome to Mukase by Lulu. We are currently accepting orders for today's fresh batch of smoky Jollof, Waakye bowls, and hot Beef Suya. How can Chef Lulu's team help you?",
-    timestamp: 'Just now',
-    quickReplies: [
-      'Track My Order',
-      'How Payment & Anti-Scam Verification Works',
-      'Customization & Dietary Options',
-      'Delivery Radius & Fees',
-      'Order via WhatsApp / iMessage',
-=======
     text: "Akwaaba! 🇬🇭 Welcome to Mukase by Lulu. We are currently accepting orders for our new menu: Jollof with wings ($28) or goat ($30), Banku with okro soup ($30), Pounded Fufu ($30), Waakye special ($28), Fried Yam ($20-$25), and custom Egusi/Efo Riro ($28+). You can also request dishes outside the menu! How can we help?",
     timestamp: 'Just now',
     quickReplies: [
@@ -322,7 +230,6 @@ const INITIAL_CHAT_MESSAGES: ChatMessage[] = [
       'Track My Order',
       'How Payment & Anti-Scam Verification Works',
       'Delivery Radius & Fees',
->>>>>>> main
     ],
   },
 ];
@@ -358,11 +265,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
-<<<<<<< HEAD
-  const [currentView, setCurrentView] = useState<'menu' | 'track' | 'kitchen'>('menu');
-=======
   const [currentView, setCurrentView] = useState<'menu' | 'story' | 'track' | 'kitchen'>('menu');
->>>>>>> main
   const [trackingOrderId, setTrackingOrderId] = useState<string>('MUK-4821');
 
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -372,8 +275,6 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(INITIAL_CHAT_MESSAGES);
 
-<<<<<<< HEAD
-=======
   const [legalModalState, setLegalModalState] = useState<{ isOpen: boolean; tab: 'privacy' | 'terms' }>({
     isOpen: false,
     tab: 'privacy',
@@ -397,7 +298,6 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
->>>>>>> main
   // Sync to storage
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
@@ -411,12 +311,6 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(orders));
   }, [orders]);
 
-<<<<<<< HEAD
-  const addToCart = (item: MenuItem, customization?: SelectedCustomization, quantity: number = 1) => {
-    const proteinExtra = customization?.proteinExtraPrice || 0;
-    const addOnsExtra = customization?.selectedAddOns.reduce((sum, a) => sum + a.price, 0) || 0;
-    const singleUnitPrice = item.price + proteinExtra + addOnsExtra;
-=======
   // Real-time synchronization with shared backend engine
   useEffect(() => {
     let isMounted = true;
@@ -459,7 +353,6 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const addOnsExtra = customization?.selectedAddOns.reduce((sum, a) => sum + a.price, 0) || 0;
     const customFee = customization?.customizationFee || 0;
     const singleUnitPrice = item.price + proteinExtra + addOnsExtra + customFee;
->>>>>>> main
     const itemTotalPrice = singleUnitPrice * quantity;
 
     const newCartItem: CartItem = {
@@ -484,12 +377,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (item.id === cartItemId) {
           const proteinExtra = item.customization?.proteinExtraPrice || 0;
           const addOnsExtra = item.customization?.selectedAddOns.reduce((sum, a) => sum + a.price, 0) || 0;
-<<<<<<< HEAD
-          const singleUnitPrice = item.menuItem.price + proteinExtra + addOnsExtra;
-=======
           const customFee = item.customization?.customizationFee || 0;
           const singleUnitPrice = item.menuItem.price + proteinExtra + addOnsExtra + customFee;
->>>>>>> main
           return {
             ...item,
             quantity: newQty,
@@ -546,12 +435,9 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIsCartOpen(false);
     setOrderConfirmationModal(newOrder);
 
-<<<<<<< HEAD
-=======
     // Push to shared backend engine (syncs to Standalone Admin on port 3001)
     pushRemoteOrder(newOrder).catch(() => {});
 
->>>>>>> main
     // Also push a chat message to the concierge
     setChatMessages(prev => [
       ...prev,
@@ -611,8 +497,6 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setActiveOrder(prev => (prev ? { ...prev, status: newStatus, paymentProof: updatedProof } : null));
     }
 
-<<<<<<< HEAD
-=======
     // Push proof to shared backend
     submitRemotePaymentProof(orderId, {
       transactionId: proof.transactionId,
@@ -620,7 +504,6 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       memoEntered: proof.memoEntered,
     }).catch(() => {});
 
->>>>>>> main
     let feedbackMsg = '';
     if (analysis.isLegitimate) {
       feedbackMsg = `Payment verified! Score: ${analysis.score}/100. Chef Lulu's kitchen has been notified to fire up the pots!`;
@@ -654,12 +537,9 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (activeOrder && activeOrder.id === orderId) {
       setActiveOrder(prev => (prev ? { ...prev, status: newStatus } : null));
     }
-<<<<<<< HEAD
-=======
 
     // Push updated status to shared backend engine (syncs to customer live tracker)
     updateRemoteOrderStatus(orderId, newStatus, riderNotes).catch(() => {});
->>>>>>> main
   };
 
   const findOrderById = (orderId: string) => {
@@ -711,13 +591,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         botResponse = `We deliver within an 8-mile radius of Midtown Atlanta (Peachtree, Buckhead, Downtown, West Midtown, Decatur). Delivery is a flat $4.99 and average prep+delivery time is 30–40 minutes!`;
         quickReplies = ['Start Order', 'View Menu'];
       } else {
-<<<<<<< HEAD
-        botResponse = `Thank you for contacting Mukase by Lulu! 🇬🇭 We specialize in authentic West African comfort food made from scratch. Would you like to browse our signature Smoky Jollof or track an active delivery?`;
-        quickReplies = ['Browse Jollof & Waakye', 'Track My Order', 'Payment FAQ'];
-=======
         botResponse = `Thank you for contacting Mukase by Lulu! 🇬🇭 We specialize in authentic West African homestyle dishes: Jollof with goat ($30) or wings ($28), Banku with okro soup ($30), Pounded Fufu ($30), Waakye, and custom Egusi/Efo Riro with your choice of swallow. You can also request dishes outside the menu!`;
         quickReplies = ['View Complete Menu', 'Order Off-Menu Custom', 'Track My Order', 'Payment FAQ'];
->>>>>>> main
       }
 
       setChatMessages(prev => [
@@ -766,14 +641,11 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setCustomizingItem,
         orderConfirmationModal,
         setOrderConfirmationModal,
-<<<<<<< HEAD
-=======
         legalModalState,
         openLegalModal,
         closeLegalModal,
         isStoryOpen,
         setIsStoryOpen,
->>>>>>> main
       }}
     >
       {children}

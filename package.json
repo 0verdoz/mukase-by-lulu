@@ -1,15 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "react-example",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
-    "build": "vite build",
-    "preview": "vite preview",
-    "clean": "rm -rf dist server.js",
-=======
   "name": "mukase-by-lulu",
   "private": true,
   "version": "1.0.0",
@@ -27,7 +16,6 @@
     "preview": "vite preview",
     "preview:admin": "vite preview --config vite.admin.config.ts",
     "clean": "node scripts/clean.js",
->>>>>>> main
     "lint": "tsc --noEmit"
   },
   "dependencies": {

@@ -3,11 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-=======
 import React from 'react';
->>>>>>> main
 import { OrderProvider, useOrder } from './context/OrderContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -18,16 +14,9 @@ import { OrderConfirmationModal } from './components/OrderConfirmationModal';
 import { OrderTracker } from './components/OrderTracker';
 import { LuluConciergeChat } from './components/LuluConciergeChat';
 import { Footer } from './components/Footer';
-<<<<<<< HEAD
-import { StaffAuthGuard } from './components/StaffAuthGuard';
-import { StandaloneStaffPortal } from './components/StandaloneStaffPortal';
-import { isStaffRoute } from './utils/staffAuth';
-import { Flame, ShieldCheck } from 'lucide-react';
-=======
 import { LegalModal } from './components/LegalModal';
 import { KitchenStoryPage } from './components/KitchenStoryPage';
 import { Flame, ShieldCheck, ChefHat } from 'lucide-react';
->>>>>>> main
 
 const AppContent: React.FC = () => {
   const {
@@ -38,67 +27,10 @@ const AppContent: React.FC = () => {
     orderConfirmationModal,
     setOrderConfirmationModal,
     setIsChatOpen,
-<<<<<<< HEAD
-  } = useOrder();
-
-  const [isStaffTerminalActive, setIsStaffTerminalActive] = useState<boolean>(() => isStaffRoute());
-
-  useEffect(() => {
-    const handleUrlChange = () => {
-      setIsStaffTerminalActive(isStaffRoute());
-    };
-
-    window.addEventListener('popstate', handleUrlChange);
-    window.addEventListener('hashchange', handleUrlChange);
-
-    // Secret staff keyboard shortcut: Ctrl+Shift+K or Cmd+Shift+K (Kitchen Terminal)
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'K' || e.key === 'k')) {
-        e.preventDefault();
-        setIsStaffTerminalActive(prev => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('popstate', handleUrlChange);
-      window.removeEventListener('hashchange', handleUrlChange);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
-
-  const handleExitStaffTerminal = () => {
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('portal');
-      url.searchParams.delete('mode');
-      url.searchParams.delete('staff');
-      url.hash = '';
-      window.history.pushState({}, '', url.pathname || '/');
-    } catch {
-      // fallback
-    }
-    setIsStaffTerminalActive(false);
-  };
-
-  // If in Standalone Staff Mode, render protected kitchen portal completely isolated from public app
-  if (isStaffTerminalActive) {
-    return (
-      <StaffAuthGuard onExitToStore={handleExitStaffTerminal}>
-        {(session) => (
-          <StandaloneStaffPortal session={session} onExit={handleExitStaffTerminal} />
-        )}
-      </StaffAuthGuard>
-    );
-  }
-
-  // Otherwise render Public Customer Storefront
-=======
     legalModalState,
     closeLegalModal,
   } = useOrder();
 
->>>>>>> main
   return (
     <div className="min-h-screen flex flex-col bg-[#faf8f5] text-stone-900 selection:bg-amber-200 selection:text-amber-900">
       <Navbar />
@@ -118,26 +50,16 @@ const AppContent: React.FC = () => {
                   <div className="lg:col-span-6 grid grid-cols-2 gap-4">
                     <div className="rounded-2xl overflow-hidden shadow-lg border border-stone-800 aspect-[4/3]">
                       <img
-<<<<<<< HEAD
-                        src="/src/assets/images/food_waakye_special_1792175369117.jpg"
-                        alt="Authentic Ghanaian Waakye bowl presentation"
-=======
                         src="/src/assets/images/banku_wings_real_1792537777301.jpg"
                         alt="Authentic Ghanaian Banku with wings"
->>>>>>> main
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"
                       />
                     </div>
                     <div className="rounded-2xl overflow-hidden shadow-lg border border-stone-800 aspect-[4/3] mt-6">
                       <img
-<<<<<<< HEAD
-                        src="/src/assets/images/food_suya_skewer_1792175370084.jpg"
-                        alt="Char-grilled spicy beef suya skewers"
-=======
                         src="/src/assets/images/suya_skewer_real_1792537797687.jpg"
                         alt="Char-grilled spicy beef suya skewers street style"
->>>>>>> main
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"
                       />
@@ -194,8 +116,6 @@ const AppContent: React.FC = () => {
                       </button>
 
                       <button
-<<<<<<< HEAD
-=======
                         onClick={() => {
                           setCurrentView('story');
                           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -207,7 +127,6 @@ const AppContent: React.FC = () => {
                       </button>
 
                       <button
->>>>>>> main
                         onClick={() => setIsChatOpen(true)}
                         className="px-5 py-2.5 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-xl text-xs font-semibold transition-colors"
                       >
@@ -223,11 +142,8 @@ const AppContent: React.FC = () => {
           </>
         )}
 
-<<<<<<< HEAD
-=======
         {currentView === 'story' && <KitchenStoryPage />}
 
->>>>>>> main
         {currentView === 'track' && <OrderTracker />}
       </main>
 
@@ -250,8 +166,6 @@ const AppContent: React.FC = () => {
         />
       )}
 
-<<<<<<< HEAD
-=======
       {/* Privacy Policy & Terms Modal */}
       <LegalModal
         isOpen={legalModalState.isOpen}
@@ -259,7 +173,6 @@ const AppContent: React.FC = () => {
         onClose={closeLegalModal}
       />
 
->>>>>>> main
       {/* Interactive Concierge Chatbot */}
       <LuluConciergeChat />
     </div>

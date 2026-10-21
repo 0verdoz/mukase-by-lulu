@@ -18,10 +18,7 @@ export const CartDrawer: React.FC = () => {
     updateCustomer,
     createOrder,
     setIsChatOpen,
-<<<<<<< HEAD
-=======
     openLegalModal,
->>>>>>> main
   } = useOrder();
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -123,11 +120,6 @@ export const CartDrawer: React.FC = () => {
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <h4 className="text-sm font-bold text-stone-900 font-display">
-<<<<<<< HEAD
-                            {item.menuItem.name}
-                          </h4>
-                          <span className="text-xs font-semibold text-amber-800 tabular-nums">
-=======
                             {item.customization?.isOffMenuCustom && item.customization?.offMenuDishName
                               ? item.customization.offMenuDishName
                               : item.menuItem.name}
@@ -138,7 +130,6 @@ export const CartDrawer: React.FC = () => {
                             </span>
                           )}
                           <span className="text-xs font-semibold text-amber-800 tabular-nums block mt-0.5">
->>>>>>> main
                             ${item.itemTotalPrice.toFixed(2)}
                           </span>
                         </div>
@@ -178,14 +169,11 @@ export const CartDrawer: React.FC = () => {
                       {/* Customization Details */}
                       {item.customization && (
                         <div className="text-xs text-stone-500 bg-stone-50 p-2 rounded-lg space-y-0.5">
-<<<<<<< HEAD
-=======
                           {item.customization.selectedSideOrSwallow && (
                             <p>
                               <strong className="text-stone-700">Side / Swallow:</strong> {item.customization.selectedSideOrSwallow}
                             </p>
                           )}
->>>>>>> main
                           {item.customization.protein && (
                             <p>
                               <strong className="text-stone-700">Protein:</strong> {item.customization.protein}
@@ -200,8 +188,6 @@ export const CartDrawer: React.FC = () => {
                               {item.customization.selectedAddOns.map(a => a.name).join(', ')}
                             </p>
                           )}
-<<<<<<< HEAD
-=======
                           {item.customization.offMenuDetails && (
                             <p>
                               <strong className="text-stone-700">Custom Prep:</strong> {item.customization.offMenuDetails}
@@ -212,7 +198,6 @@ export const CartDrawer: React.FC = () => {
                               + Custom Chef Prep Surcharge (${item.customization.customizationFee.toFixed(2)})
                             </p>
                           ) : null}
->>>>>>> main
                           {item.customization.specialInstructions && (
                             <p className="italic text-stone-600">
                               Note: "{item.customization.specialInstructions}"
@@ -432,8 +417,6 @@ export const CartDrawer: React.FC = () => {
                 Or check out via Lulu Concierge Assistant in-app
               </button>
 
-<<<<<<< HEAD
-=======
               {/* Legal Notice */}
               <p className="text-[11px] text-center text-stone-400 pt-1">
                 By placing an order, you agree to our{' '}
@@ -454,7 +437,6 @@ export const CartDrawer: React.FC = () => {
                 </button>.
               </p>
 
->>>>>>> main
             </div>
 
           </div>

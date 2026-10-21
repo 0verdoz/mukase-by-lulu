@@ -29,11 +29,7 @@ export const Hero: React.FC = () => {
             </h1>
 
             <p className="text-base sm:text-lg text-stone-600 leading-relaxed max-w-xl">
-<<<<<<< HEAD
-              From slow-simmered smoky party jollof and rich waakye bowls to flame-charred beef suya. Order directly via WhatsApp or iMessage with automated fraud protection and live kitchen dispatch tracking.
-=======
               Smoky jollof with goat meat or wings, authentic banku with rich okro soup, pounded fufu with goat light soup, and fried yam with crispy peppered fish. Custom foods and off-menu orders prepared fresh to order.
->>>>>>> main
             </p>
 
             {/* Action Buttons */}
@@ -61,8 +57,6 @@ export const Hero: React.FC = () => {
                 <MessageCircle className="w-4 h-4 text-emerald-600" />
                 <span>Chat with Lulu Bot</span>
               </button>
-<<<<<<< HEAD
-=======
 
               <button
                 type="button"
@@ -75,7 +69,6 @@ export const Hero: React.FC = () => {
                 <Flame className="w-4 h-4 text-amber-600" />
                 <span>Our Kitchen Story</span>
               </button>
->>>>>>> main
             </div>
 
             {/* Anti-Scam Assurance Note */}
@@ -92,13 +85,8 @@ export const Hero: React.FC = () => {
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/15 border border-stone-200 bg-stone-100 group">
               <img
-<<<<<<< HEAD
-                src="/src/assets/images/hero_mukase_jollof_1792175369150.jpg"
-                alt="Mukase by Lulu Authentic West African Smoky Party Jollof Platter with fried plantains and grilled chicken"
-=======
                 src="/src/assets/images/jollof_goat_real_1792537753380.jpg"
                 alt="Mukase by Lulu Authentic West African Smoky Party Jollof with slow-braised goat meat"
->>>>>>> main
                 className="w-full h-[360px] sm:h-[440px] object-cover group-hover:scale-[1.02] transition-transform duration-500"
                 referrerPolicy="no-referrer"
               />
@@ -109,21 +97,12 @@ export const Hero: React.FC = () => {
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <span className="text-xs uppercase tracking-wider text-amber-300 font-semibold">Today's Star Entree</span>
-<<<<<<< HEAD
-                    <h2 className="text-xl font-bold font-display">Smoky Party Jollof Platter</h2>
-                    <p className="text-xs text-stone-200">With fried sweet plantains & peri-peri grilled chicken</p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-xs text-stone-300 block">From</span>
-                    <span className="text-2xl font-bold font-display tabular-nums text-white">$18.50</span>
-=======
                     <h2 className="text-xl font-bold font-display">Jollof with Goat Meat</h2>
                     <p className="text-xs text-stone-200">Smoky Ghanaian jollof with tender slow-braised goat meat</p>
                   </div>
                   <div className="text-right shrink-0">
                     <span className="text-xs text-stone-300 block">From</span>
                     <span className="text-2xl font-bold font-display tabular-nums text-white">$30.00</span>
->>>>>>> main
                   </div>
                 </div>
               </div>

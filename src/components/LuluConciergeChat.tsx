@@ -4,11 +4,7 @@ import { useOrder } from '../context/OrderContext';
 import { LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT, LULU_PHONE_NUMBER } from '../utils/checkout';
 
 export const LuluConciergeChat: React.FC = () => {
-<<<<<<< HEAD
-  const { isChatOpen, setIsChatOpen, chatMessages, sendUserMessage, setCurrentView, setTrackingOrderId } = useOrder();
-=======
   const { isChatOpen, setIsChatOpen, chatMessages, sendUserMessage, setCurrentView, setTrackingOrderId, setIsStoryOpen } = useOrder();
->>>>>>> main
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -30,8 +26,6 @@ export const LuluConciergeChat: React.FC = () => {
   };
 
   const handleQuickReply = (text: string) => {
-<<<<<<< HEAD
-=======
     if (text.includes('Story')) {
       setIsStoryOpen(true);
       setIsChatOpen(false);
@@ -45,7 +39,6 @@ export const LuluConciergeChat: React.FC = () => {
       }, 100);
       return;
     }
->>>>>>> main
     if (text.includes('Track') || text.includes('MUK-')) {
       const match = text.match(/MUK-\d{4}/i);
       if (match) {

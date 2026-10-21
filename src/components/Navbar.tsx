@@ -1,20 +1,9 @@
-<<<<<<< HEAD
-import React from 'react';
-import { ShoppingBag, Search, Sparkles, ChefHat, ShieldCheck, MapPin, MessageSquare } from 'lucide-react';
-=======
 import React, { useState } from 'react';
 import { ShoppingBag, ChefHat, MessageSquare, Menu, X, BookOpen, Clock, Utensils } from 'lucide-react';
->>>>>>> main
 import { useOrder } from '../context/OrderContext';
 
 export const Navbar: React.FC = () => {
   const { cartCount, cartTotal, setIsCartOpen, currentView, setCurrentView, setIsChatOpen } = useOrder();
-<<<<<<< HEAD
-
-  return (
-    <header className="sticky top-0 z-40 bg-[#faf8f5]/90 backdrop-blur-md border-b border-stone-200/80 transition-colors">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-8 px-4 sm:px-6 lg:px-8 py-3.5">
-=======
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navigateTo = (view: 'menu' | 'story' | 'track') => {
@@ -26,16 +15,11 @@ export const Navbar: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 bg-[#faf8f5]/90 backdrop-blur-md border-b border-stone-200/80 transition-colors">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 py-3.5">
->>>>>>> main
         
         {/* Zone 1: Single text element brand wordmark */}
         <div className="flex items-center gap-3 shrink-0">
           <button
-<<<<<<< HEAD
-            onClick={() => setCurrentView('menu')}
-=======
             onClick={() => navigateTo('menu')}
->>>>>>> main
             className="group flex items-center gap-2.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 rounded-lg"
           >
             <div className="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold shadow-sm shadow-amber-600/20 group-hover:bg-amber-700 transition-colors">
@@ -47,17 +31,10 @@ export const Navbar: React.FC = () => {
           </button>
         </div>
 
-<<<<<<< HEAD
-        {/* Zone 2: 4-5 clean single-line text navigation links */}
-        <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-stone-600">
-          <button
-            onClick={() => setCurrentView('menu')}
-=======
         {/* Zone 2: Desktop clean single-line text navigation links */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-stone-600">
           <button
             onClick={() => navigateTo('menu')}
->>>>>>> main
             className={`transition-colors whitespace-nowrap shrink-0 hover:text-stone-900 pb-0.5 ${
               currentView === 'menu' ? 'text-amber-700 font-semibold border-b-2 border-amber-600' : ''
             }`}
@@ -65,9 +42,6 @@ export const Navbar: React.FC = () => {
             Kitchen Menu
           </button>
           <button
-<<<<<<< HEAD
-            onClick={() => setCurrentView('track')}
-=======
             type="button"
             onClick={() => navigateTo('story')}
             className={`transition-colors whitespace-nowrap shrink-0 hover:text-stone-900 pb-0.5 ${
@@ -78,7 +52,6 @@ export const Navbar: React.FC = () => {
           </button>
           <button
             onClick={() => navigateTo('track')}
->>>>>>> main
             className={`transition-colors whitespace-nowrap shrink-0 hover:text-stone-900 pb-0.5 ${
               currentView === 'track' ? 'text-amber-700 font-semibold border-b-2 border-amber-600' : ''
             }`}
@@ -92,21 +65,6 @@ export const Navbar: React.FC = () => {
             <MessageSquare className="w-4 h-4 text-amber-600" />
             <span>Lulu Concierge</span>
           </button>
-<<<<<<< HEAD
-          <a
-            href="#story-section"
-            className="transition-colors whitespace-nowrap shrink-0 hover:text-stone-900 pb-0.5"
-          >
-            Our Kitchen Story
-          </a>
-        </nav>
-
-        {/* Zone 3: 1 primary action */}
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="flex items-center gap-2.5 px-4 py-2 text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 active:scale-[0.98] transition-all rounded-xl shadow-sm shadow-amber-600/25 whitespace-nowrap shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
-=======
         </nav>
 
         {/* Zone 3: Actions (Order Bag & Mobile Hamburger) */}
@@ -114,24 +72,10 @@ export const Navbar: React.FC = () => {
           <button
             onClick={() => setIsCartOpen(true)}
             className="flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 active:scale-[0.98] transition-all rounded-xl shadow-sm shadow-amber-600/25 whitespace-nowrap shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
->>>>>>> main
             aria-label="View shopping bag"
           >
             <ShoppingBag className="w-4 h-4" />
             <span className="hidden sm:inline">Order Bag</span>
-<<<<<<< HEAD
-            <span className="bg-amber-700/80 px-2 py-0.5 rounded-md text-xs font-bold tabular-nums">
-              {cartCount} {cartCount === 1 ? 'item' : 'items'}
-              {cartTotal > 0 && ` · $${cartTotal.toFixed(2)}`}
-            </span>
-          </button>
-        </div>
-
-      </div>
-    </header>
-  );
-};
-=======
             <span className="bg-amber-700/80 px-1.5 sm:px-2 py-0.5 rounded-md text-xs font-bold tabular-nums">
               {cartCount}
               {cartTotal > 0 && <span className="hidden xs:inline"> · ${cartTotal.toFixed(2)}</span>}
@@ -199,4 +143,3 @@ export const Navbar: React.FC = () => {
   );
 };
 
->>>>>>> main

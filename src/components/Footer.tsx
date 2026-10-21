@@ -1,18 +1,9 @@
-<<<<<<< HEAD
-import React from 'react';
-import { ChefHat, ShieldCheck, Phone, MapPin, Clock, Lock } from 'lucide-react';
-=======
 import { ChefHat, ShieldCheck, Phone, MapPin, Clock } from 'lucide-react';
->>>>>>> main
 import { useOrder } from '../context/OrderContext';
 import { LULU_PHONE_NUMBER, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
 
 export const Footer: React.FC = () => {
-<<<<<<< HEAD
-  const { setCurrentView } = useOrder();
-=======
   const { setCurrentView, openLegalModal } = useOrder();
->>>>>>> main
 
   return (
     <footer className="bg-stone-900 text-stone-300 py-12 border-t border-stone-800">
@@ -57,15 +48,9 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-<<<<<<< HEAD
-          {/* Quick Links */}
-          <div className="space-y-2">
-            <h4 className="font-bold text-white uppercase tracking-wider">Direct Navigation</h4>
-=======
           {/* Quick Links & Legal */}
           <div className="space-y-2">
             <h4 className="font-bold text-white uppercase tracking-wider">Kitchen & Policies</h4>
->>>>>>> main
             <ul className="space-y-1.5 text-stone-400">
               <li>
                 <button
@@ -84,14 +69,6 @@ export const Footer: React.FC = () => {
                 </button>
               </li>
               <li>
-<<<<<<< HEAD
-                <a
-                  href="#story-section"
-                  className="hover:text-white transition-colors"
-                >
-                  Culinary Heritage & Shito
-                </a>
-=======
                 <button
                   type="button"
                   onClick={() => {
@@ -118,27 +95,12 @@ export const Footer: React.FC = () => {
                 >
                   <span>Terms & Conditions</span>
                 </button>
->>>>>>> main
               </li>
             </ul>
           </div>
 
         </div>
 
-<<<<<<< HEAD
-        {/* Quiet copyright */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-stone-500 text-xs">
-          <div className="flex items-center gap-2">
-            <p>© {new Date().getFullYear()} Mukase by Lulu. All rights reserved.</p>
-            <a
-              href="?portal=staff"
-              className="opacity-20 hover:opacity-100 transition-opacity p-1 text-stone-600 hover:text-amber-500 focus:outline-none"
-              title="Staff Terminal"
-              aria-label="Staff Terminal"
-            >
-              <Lock className="w-3 h-3" />
-            </a>
-=======
         {/* Quiet copyright & legal links */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-stone-500 text-xs">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
@@ -158,7 +120,6 @@ export const Footer: React.FC = () => {
                 Terms of Service
               </button>
             </div>
->>>>>>> main
           </div>
           <p>Hand-crafted Ghanaian Comfort Food · WhatsApp & iMessage Delivery System</p>
         </div>

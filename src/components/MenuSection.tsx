@@ -1,20 +1,4 @@
 import React, { useState, useMemo } from 'react';
-<<<<<<< HEAD
-import { Plus, SlidersHorizontal, Flame, Search, Check } from 'lucide-react';
-import { MenuItem } from '../types';
-import { MENU_ITEMS } from '../data/menu';
-import { useOrder } from '../context/OrderContext';
-
-type CategoryFilter = 'all' | 'jollof' | 'bowls' | 'suya' | 'sides' | 'drinks';
-
-const CATEGORIES: { id: CategoryFilter; label: string }[] = [
-  { id: 'all', label: 'All Dishes' },
-  { id: 'jollof', label: 'Smoky Jollof' },
-  { id: 'bowls', label: 'Waakye Bowls' },
-  { id: 'suya', label: 'Beef Suya' },
-  { id: 'sides', label: 'Sides & Small Chops' },
-  { id: 'drinks', label: 'Artisanal Drinks' },
-=======
 import { Plus, SlidersHorizontal, Flame, Search, Check, Sparkles, ChefHat } from 'lucide-react';
 import { MenuItem, MenuCategory } from '../types';
 import { MENU_ITEMS } from '../data/menu';
@@ -30,7 +14,6 @@ const CATEGORIES: { id: CategoryFilter; label: string }[] = [
   { id: 'yam-cassava', label: 'Yam & Cassava' },
   { id: 'chops-sides', label: 'Small Chops & Kelewele' },
   { id: 'custom-chef', label: 'Custom & Off-Menu ($28+)' },
->>>>>>> main
 ];
 
 export const MenuSection: React.FC = () => {
@@ -59,23 +42,6 @@ export const MenuSection: React.FC = () => {
     }
   };
 
-<<<<<<< HEAD
-  return (
-    <section id="menu-section" className="py-12 sm:py-16 bg-[#faf8f5]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-stone-200">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-amber-800 mb-1">
-              Cooked Fresh To Order · Ghanaian Comfort Food
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-stone-900 font-display tracking-tight">
-              Chef Lulu’s Daily Kitchen Menu
-            </h2>
-            <p className="text-sm text-stone-600 mt-1 max-w-xl">
-              Choose your main platter, customize your protein, dial in your spice heat, and add extra fried plantains or boiled eggs.
-=======
   const offMenuSpecialItem = MENU_ITEMS.find(i => i.id === 'chef-off-menu-request');
 
   return (
@@ -93,7 +59,6 @@ export const MenuSection: React.FC = () => {
             </h2>
             <p className="text-sm text-stone-600 mt-1 max-w-xl">
               Authentic Jollof, Banku, Pounded Fufu with goat light soup, Waakye, Egusi, fried yam, and crispy pepper wings. Customized foods come at an extra fee.
->>>>>>> main
             </p>
           </div>
 
@@ -104,20 +69,12 @@ export const MenuSection: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-<<<<<<< HEAD
-              placeholder="Search jollof, suya, waakye..."
-=======
               placeholder="Search jollof, banku, fufu, egusi..."
->>>>>>> main
               className="w-full pl-9 pr-4 py-2 text-sm bg-white border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-600 placeholder:text-stone-400"
             />
           </div>
         </div>
 
-<<<<<<< HEAD
-        {/* Filter Navigation (Interactive button segmented tabs as permitted by skill) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto py-5 no-scrollbar">
-=======
         {/* Custom Off-Menu Callout Banner */}
         <div className="bg-gradient-to-r from-amber-900 via-stone-900 to-stone-950 text-white rounded-2xl p-5 sm:p-6 shadow-md border border-amber-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1 max-w-2xl">
@@ -147,7 +104,6 @@ export const MenuSection: React.FC = () => {
 
         {/* Filter Navigation (Interactive segmented buttons) */}
         <div className="flex items-center gap-1.5 overflow-x-auto py-2 no-scrollbar">
->>>>>>> main
           {CATEGORIES.map(cat => {
             const isActive = selectedCategory === cat.id;
             return (
@@ -155,11 +111,7 @@ export const MenuSection: React.FC = () => {
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCategory(cat.id)}
-<<<<<<< HEAD
-                className={`px-4 py-2 text-xs sm:text-sm font-medium rounded-xl whitespace-nowrap shrink-0 transition-all ${
-=======
                 className={`px-3.5 py-2 text-xs sm:text-sm font-medium rounded-xl whitespace-nowrap shrink-0 transition-all ${
->>>>>>> main
                   isActive
                     ? 'bg-amber-600 text-white shadow-sm shadow-amber-600/25 font-semibold'
                     : 'bg-white text-stone-600 hover:text-stone-900 border border-stone-200 hover:border-stone-300'
@@ -183,16 +135,10 @@ export const MenuSection: React.FC = () => {
             </button>
           </div>
         ) : (
-<<<<<<< HEAD
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-4">
-            {filteredItems.map(item => {
-              const isJustAdded = addedItemNotice === item.id;
-=======
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
             {filteredItems.map(item => {
               const isJustAdded = addedItemNotice === item.id;
               const isCustomizable = item.isCustomizable;
->>>>>>> main
               return (
                 <div
                   key={item.id}
@@ -208,11 +154,7 @@ export const MenuSection: React.FC = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 via-transparent to-transparent opacity-60" />
 
-<<<<<<< HEAD
-                    {/* Subtle Tag if present (not a pill badge sandwich, just subtle single tag) */}
-=======
                     {/* Subtle Tag if present */}
->>>>>>> main
                     {item.tag && (
                       <span className="absolute top-3 left-3 px-2.5 py-1 text-[11px] font-semibold bg-stone-900/80 backdrop-blur-md text-amber-200 rounded-md">
                         {item.tag}
@@ -237,10 +179,7 @@ export const MenuSection: React.FC = () => {
                         </h3>
                         <span className="text-base font-bold text-stone-900 tabular-nums shrink-0">
                           ${item.price.toFixed(2)}
-<<<<<<< HEAD
-=======
                           {item.id.includes('custom') && '+'}
->>>>>>> main
                         </span>
                       </div>
 
@@ -249,19 +188,12 @@ export const MenuSection: React.FC = () => {
                       </p>
 
                       {/* Customization highlight */}
-<<<<<<< HEAD
-                      {item.isCustomizable && (
-                        <div className="mt-3 flex items-center gap-1.5 text-[11px] text-amber-800 font-medium">
-                          <SlidersHorizontal className="w-3 h-3 text-amber-700" />
-                          <span>Customizable: Protein, Spice, Egg & Sausage</span>
-=======
                       {isCustomizable && (
                         <div className="mt-2.5 flex items-center gap-1.5 text-[11px] text-amber-800 font-medium">
                           <SlidersHorizontal className="w-3 h-3 text-amber-700" />
                           <span>
                             {item.sidesOptions ? 'Choose Swallow / Side & Meats' : 'Customizable Add-ons & Heat'}
                           </span>
->>>>>>> main
                         </div>
                       )}
                     </div>
@@ -269,11 +201,7 @@ export const MenuSection: React.FC = () => {
                     {/* Card Action Button */}
                     <div className="mt-5 pt-4 border-t border-stone-100 flex items-center justify-between gap-3">
                       <span className="text-xs text-stone-400">
-<<<<<<< HEAD
-                        {item.isCustomizable ? 'Includes sides & protein' : 'Ready to serve'}
-=======
                         {isCustomizable ? 'Custom add-ons available' : 'Ready to serve'}
->>>>>>> main
                       </span>
 
                       <button
@@ -290,11 +218,7 @@ export const MenuSection: React.FC = () => {
                             <Check className="w-3.5 h-3.5" />
                             <span>Added!</span>
                           </>
-<<<<<<< HEAD
-                        ) : item.isCustomizable ? (
-=======
                         ) : isCustomizable ? (
->>>>>>> main
                           <>
                             <SlidersHorizontal className="w-3.5 h-3.5" />
                             <span>Customize & Add</span>

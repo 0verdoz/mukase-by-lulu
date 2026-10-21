@@ -1,3 +1,4 @@
+import fs from 'fs';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
@@ -17,6 +18,17 @@ export default defineConfig(() => {
             }
             next();
           });
+        },
+        closeBundle() {
+          const adminPath = path.resolve(import.meta.dirname, 'dist-admin/admin.html');
+          const indexPath = path.resolve(import.meta.dirname, 'dist-admin/index.html');
+          try {
+            if (fs.existsSync(adminPath)) {
+              fs.copyFileSync(adminPath, indexPath);
+            }
+          } catch {
+            // ignore
+          }
         },
       },
     ],
