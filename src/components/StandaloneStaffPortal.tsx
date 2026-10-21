@@ -60,7 +60,11 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
   };
 
   const handleCopyStaffUrl = () => {
+<<<<<<< HEAD
     const staffUrl = `${window.location.origin}${window.location.pathname}?portal=staff`;
+=======
+    const staffUrl = window.location.origin;
+>>>>>>> main
     navigator.clipboard.writeText(staffUrl);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2500);
@@ -478,11 +482,26 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                         {selectedOrder.items.map((item, idx) => (
                           <div key={idx} className="p-3 bg-stone-950 rounded-xl border border-stone-800 text-xs space-y-1">
                             <div className="flex justify-between font-bold text-white text-sm">
+<<<<<<< HEAD
                               <span>{item.quantity}x {item.menuItem.name}</span>
+=======
+                              <span>
+                                {item.quantity}x{' '}
+                                {item.customization?.isOffMenuCustom && item.customization?.offMenuDishName
+                                  ? item.customization.offMenuDishName
+                                  : item.menuItem.name}
+                              </span>
+>>>>>>> main
                               <span className="tabular-nums text-amber-400">${item.itemTotalPrice.toFixed(2)}</span>
                             </div>
                             {item.customization && (
                               <div className="text-stone-400 space-y-0.5">
+<<<<<<< HEAD
+=======
+                                {item.customization.selectedSideOrSwallow && (
+                                  <p><span className="text-stone-300 font-semibold">Side / Swallow:</span> {item.customization.selectedSideOrSwallow}</p>
+                                )}
+>>>>>>> main
                                 {item.customization.protein && (
                                   <p><span className="text-stone-300">Protein:</span> {item.customization.protein}</p>
                                 )}
@@ -490,6 +509,14 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                                 {item.customization.selectedAddOns.length > 0 && (
                                   <p><span className="text-stone-300">Add-ons:</span> {item.customization.selectedAddOns.map(a => a.name).join(', ')}</p>
                                 )}
+<<<<<<< HEAD
+=======
+                                {item.customization.offMenuDetails && (
+                                  <p className="text-emerald-300 bg-emerald-950/40 p-1.5 rounded mt-1 border border-emerald-900/50">
+                                    <strong>Off-Menu Request:</strong> "{item.customization.offMenuDetails}"
+                                  </p>
+                                )}
+>>>>>>> main
                                 {item.customization.specialInstructions && (
                                   <p className="text-amber-300 bg-amber-950/40 p-1.5 rounded mt-1 border border-amber-900/50">
                                     <strong>Chef Instruction:</strong> "{item.customization.specialInstructions}"

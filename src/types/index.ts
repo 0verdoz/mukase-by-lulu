@@ -4,28 +4,61 @@ export interface CustomizationOption {
   id: string;
   name: string;
   price: number;
+<<<<<<< HEAD
 }
 
 export interface MenuItem {
   id: string;
   name: string;
   category: 'jollof' | 'bowls' | 'suya' | 'sides' | 'drinks';
+=======
+  category?: 'side' | 'protein' | 'addon' | 'swallow';
+}
+
+export type MenuCategory = 
+  | 'jollof' 
+  | 'banku-fufu' 
+  | 'yam-cassava' 
+  | 'soups-stews' 
+  | 'chops-sides' 
+  | 'custom-chef';
+
+export interface MenuItem {
+  id: string;
+  name: string;
+  category: MenuCategory;
+>>>>>>> main
   price: number;
   description: string;
   image: string;
   tag?: string;
   spicyLevel?: number; // 0 to 3
   isCustomizable?: boolean;
+<<<<<<< HEAD
+=======
+  sidesOptions?: { name: string; extraPrice: number }[];
+>>>>>>> main
   proteinOptions?: { name: string; extraPrice: number }[];
   availableAddOns?: CustomizationOption[];
 }
 
 export interface SelectedCustomization {
+<<<<<<< HEAD
+=======
+  selectedSideOrSwallow?: string;
+>>>>>>> main
   protein?: string;
   proteinExtraPrice: number;
   spiceLevel: SpiceLevel;
   selectedAddOns: CustomizationOption[];
   specialInstructions?: string;
+<<<<<<< HEAD
+=======
+  isOffMenuCustom?: boolean;
+  offMenuDishName?: string;
+  offMenuDetails?: string;
+  customizationFee?: number;
+>>>>>>> main
 }
 
 export interface CartItem {

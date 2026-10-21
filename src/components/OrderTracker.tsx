@@ -331,16 +331,34 @@ export const OrderTracker: React.FC = () => {
                   {currentOrder.items.map((item, idx) => (
                     <div key={idx} className="pt-2 text-xs space-y-1">
                       <div className="flex justify-between font-semibold text-stone-900">
+<<<<<<< HEAD
                         <span>{item.quantity}x {item.menuItem.name}</span>
+=======
+                        <span>
+                          {item.quantity}x{' '}
+                          {item.customization?.isOffMenuCustom && item.customization?.offMenuDishName
+                            ? item.customization.offMenuDishName
+                            : item.menuItem.name}
+                        </span>
+>>>>>>> main
                         <span className="tabular-nums">${item.itemTotalPrice.toFixed(2)}</span>
                       </div>
                       {item.customization && (
                         <div className="text-[11px] text-stone-500 space-y-0.5">
+<<<<<<< HEAD
                           {item.customization.protein && <div>• {item.customization.protein}</div>}
+=======
+                          {item.customization.selectedSideOrSwallow && <div>• Side/Swallow: {item.customization.selectedSideOrSwallow}</div>}
+                          {item.customization.protein && <div>• Protein: {item.customization.protein}</div>}
+>>>>>>> main
                           <div>• Heat: {item.customization.spiceLevel}</div>
                           {item.customization.selectedAddOns.map(a => (
                             <div key={a.id}>• +{a.name}</div>
                           ))}
+<<<<<<< HEAD
+=======
+                          {item.customization.offMenuDetails && <div>• Custom Prep: {item.customization.offMenuDetails}</div>}
+>>>>>>> main
                         </div>
                       )}
                     </div>

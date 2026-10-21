@@ -1,6 +1,10 @@
 node_modules/
 build/
 dist/
+<<<<<<< HEAD
+=======
+dist-admin/
+>>>>>>> main
 coverage/
 .DS_Store
 *.log
