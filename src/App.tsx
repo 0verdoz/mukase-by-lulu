@@ -50,7 +50,7 @@ const AppContent: React.FC = () => {
                   <div className="lg:col-span-6 grid grid-cols-2 gap-4">
                     <div className="rounded-2xl overflow-hidden shadow-lg border border-stone-800 aspect-[4/3]">
                       <img
-                        src="/src/assets/images/banku_wings_real_1792537777301.jpg"
+                        src="/assets/images/banku_wings_real_1792537777301.jpg"
                         alt="Authentic Ghanaian Banku with wings"
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"
@@ -58,7 +58,7 @@ const AppContent: React.FC = () => {
                     </div>
                     <div className="rounded-2xl overflow-hidden shadow-lg border border-stone-800 aspect-[4/3] mt-6">
                       <img
-                        src="/src/assets/images/suya_skewer_real_1792537797687.jpg"
+                        src="/assets/images/suya_skewer_real_1792537797687.jpg"
                         alt="Char-grilled spicy beef suya skewers street style"
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                         referrerPolicy="no-referrer"

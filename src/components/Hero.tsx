@@ -85,7 +85,7 @@ export const Hero: React.FC = () => {
           <div className="lg:col-span-6 relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/15 border border-stone-200 bg-stone-100 group">
               <img
-                src="/src/assets/images/jollof_goat_real_1792537753380.jpg"
+                src="/assets/images/jollof_goat_real_1792537753380.jpg"
                 alt="Mukase by Lulu Authentic West African Smoky Party Jollof with slow-braised goat meat"
                 className="w-full h-[360px] sm:h-[440px] object-cover group-hover:scale-[1.02] transition-transform duration-500"
                 referrerPolicy="no-referrer"

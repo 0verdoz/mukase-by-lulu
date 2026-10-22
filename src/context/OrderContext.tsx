@@ -108,7 +108,7 @@ const INITIAL_DEMO_ORDERS: Order[] = [
           category: 'jollof',
           price: 30.00,
           description: 'Authentic Ghanaian smoky jollof rice topped with tender, slow-braised marinated goat meat...',
-          image: '/src/assets/images/jollof_goat_real_1792537753380.jpg',
+          image: '/assets/images/jollof_goat_real_1792537753380.jpg',
         },
         quantity: 1,
         customization: {
@@ -131,7 +131,7 @@ const INITIAL_DEMO_ORDERS: Order[] = [
           category: 'yam-cassava',
           price: 20.00,
           description: 'Crispy thick-cut Ghanaian pona yam chips fried golden with wings...',
-          image: '/src/assets/images/fried_yam_wings_real_1792537754730.jpg',
+          image: '/assets/images/fried_yam_wings_real_1792537754730.jpg',
         },
         quantity: 1,
         itemTotalPrice: 20.00,
@@ -181,7 +181,7 @@ const INITIAL_DEMO_ORDERS: Order[] = [
           category: 'banku-fufu',
           price: 30.00,
           description: 'Authentic Ghanaian fermented corn and cassava Banku dumpling...',
-          image: '/src/assets/images/food_banku_okro_soup_1792535657171.jpg',
+          image: '/assets/images/food_banku_okro_soup_1792535657171.jpg',
         },
         quantity: 1,
         customization: {
