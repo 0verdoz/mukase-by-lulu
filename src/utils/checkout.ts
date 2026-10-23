@@ -3,7 +3,7 @@ import { CartItem, CustomerDetails, Order } from '../types';
 export const LULU_PHONE_NUMBER = '233506844622'; // Lulu's official business WhatsApp/SMS line
 export const LULU_CASHAPP_TAG = '$MukaseByLulu';
 export const LULU_ZELLE_CONTACT = 'orders@mukasebylulu.com (404-555-0198)';
-export const LULU_APPLE_CASH = '404-555-0198';
+export const LULU_APPLE_CASH = '233506844622';
 
 /**
  * Generate a unique 6-character order tracking code
@@ -66,18 +66,18 @@ Date: ${new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minu
 • Phone: ${customer.phone}
 • Delivery Address: ${customer.address}${customer.apartmentSuite ? `, Apt/Ste ${customer.apartmentSuite}` : ''}, ${customer.city}
 ${customer.deliveryNotes ? `• Instructions: ${customer.deliveryNotes}\n` : ''}
-📋 *FOOD ITEMS:*
+*FOOD ITEMS:*
 ${itemDetails}
-💵 *FINANCIAL BREAKDOWN:*
+*FINANCIAL BREAKDOWN:*
 • Food Subtotal: $${subtotal.toFixed(2)}
 • Delivery Fee: $${deliveryFee.toFixed(2)}
 • Tax & Fees: $${tax.toFixed(2)}
 • *TOTAL DUE: $${total.toFixed(2)}*
 ------------------------------------------
-💳 *PAYMENT INSTRUCTIONS:*
+*PAYMENT INSTRUCTIONS:*
 Method: ${paymentMethodLabel}
 Sender Handle/Name: ${customer.paymentIdentifier || 'Not provided'}
-⚠️ *MANDATORY ANTI-FRAUD MEMO:* "${id}"
+*MANDATORY ANTI-FRAUD MEMO:* "${id}"
 
 Please include your exact Order Code *${id}* in your payment memo/note so Chef Lulu's staff can instantly verify your payment and start cooking!`;
 }
