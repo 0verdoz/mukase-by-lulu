@@ -44,7 +44,7 @@ export const Footer: React.FC = () => {
             </p>
             <div className="text-stone-400 space-y-0.5">
               <p>Cash App: <strong className="text-white">{LULU_CASHAPP_TAG}</strong></p>
-              <p>WhatsApp: <strong className="text-white">+1 {LULU_PHONE_NUMBER}</strong></p>
+              <p>WhatsApp: <strong className="text-white">+233 {LULU_PHONE_NUMBER}</strong></p>
             </div>
           </div>
 

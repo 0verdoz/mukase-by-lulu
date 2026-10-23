@@ -1,6 +1,6 @@
 import { CartItem, CustomerDetails, Order } from '../types';
 
-export const LULU_PHONE_NUMBER = '14045550198'; // Lulu's official business WhatsApp/SMS line
+export const LULU_PHONE_NUMBER = '233506844622'; // Lulu's official business WhatsApp/SMS line
 export const LULU_CASHAPP_TAG = '$MukaseByLulu';
 export const LULU_ZELLE_CONTACT = 'orders@mukasebylulu.com (404-555-0198)';
 export const LULU_APPLE_CASH = '404-555-0198';
