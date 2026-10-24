@@ -108,7 +108,7 @@ const INITIAL_DEMO_ORDERS: Order[] = [
           category: 'jollof',
           price: 30.00,
           description: 'Authentic Ghanaian smoky jollof rice topped with tender, slow-braised marinated goat meat...',
-          image: '/assets/images/jollof_goat_real_1792537753380.jpg',
+          image: '/assets/images/jollof_goat.jpeg',
         },
         quantity: 1,
         customization: {

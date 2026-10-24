@@ -171,7 +171,7 @@ export const KitchenStoryPage: React.FC = () => {
             <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-4 hover:border-amber-400 transition-colors">
               <div className="rounded-xl overflow-hidden aspect-[4/3]">
                 <img
-                  src="/assets/images/jollof_goat_real_1792537753380.jpg"
+                  src="/assets/images/jollof_goat.jpeg"
                   alt="Smoky Ghanaian party jollof rice with tender goat meat"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
