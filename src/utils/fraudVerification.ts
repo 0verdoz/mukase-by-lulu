@@ -101,7 +101,8 @@ export function analyzePaymentProof(
   if (proof.rawTextOrReceipt) {
     const rawLower = proof.rawTextOrReceipt.toLowerCase();
     if (order.customer.preferredPayment === 'cashapp') {
-      if (!rawLower.includes('mukasebylulu') && !rawLower.includes('mukase by lulu')) {
+      const tagClean = LULU_CASHAPP_TAG.toLowerCase().replace('$', '');
+      if (!rawLower.includes(tagClean) && !rawLower.includes('mukase')) {
         recipientMatched = false;
         score -= 30;
         flags.push(`Recipient Tag Mismatch: Receipt text does not mention ${LULU_CASHAPP_TAG}. Verify that payment was actually sent to Lulu.`);

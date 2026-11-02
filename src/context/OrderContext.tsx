@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CartItem, CustomerDetails, MenuItem, Order, OrderStatus, SelectedCustomization, ChatMessage } from '../types';
-import { generateOrderCode } from '../utils/checkout';
+import { generateOrderCode, LULU_CASHAPP_TAG } from '../utils/checkout';
 import { analyzePaymentProof, registerTransactionId } from '../utils/fraudVerification';
 import {
   fetchRemoteOrders,
@@ -582,7 +582,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           quickReplies = ['MUK-4821', 'MUK-6190'];
         }
       } else if (lower.includes('payment') || lower.includes('scam') || lower.includes('cashapp') || lower.includes('zelle') || lower.includes('memo')) {
-        botResponse = `To prevent scams and duplicate receipt fraud, Mukase by Lulu requires your unique Order Code (e.g. "MUK-8492") in your CashApp ($MukaseByLulu) or Zelle memo field. Our verification system automatically audits the transaction reference number and prevents recycled receipts!`;
+        botResponse = `To prevent scams and duplicate receipt fraud, Mukase by Lulu requires your unique Order Code (e.g. "MUK-8492") in your CashApp (${LULU_CASHAPP_TAG}) or Zelle memo field. Our verification system automatically audits the transaction reference number and prevents recycled receipts!`;
         quickReplies = ['Submit Payment Proof', 'View CashApp Tag', 'Order Now'];
       } else if (lower.includes('allergy') || lower.includes('peanut') || lower.includes('suya') || lower.includes('vegan')) {
         botResponse = `Nut Allergy Warning: Beef Suya skewers contain traditional Yaji spice made with roasted peanuts (Kuli-Kuli). For nut-free options, enjoy our Smoky Party Jollof, Special Waakye Bowl, and Kelewele without peanut garnish!`;

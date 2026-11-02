@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, ChefHat, ShieldCheck, ArrowRight, CornerDownLeft, Sparkles } from 'lucide-react';
 import { useOrder } from '../context/OrderContext';
-import { LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT, LULU_PHONE_NUMBER } from '../utils/checkout';
+import { LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT, LULU_PHONE_NUMBER, LULU_PHONE_DISPLAY } from '../utils/checkout';
 
 export const LuluConciergeChat: React.FC = () => {
   const { isChatOpen, setIsChatOpen, chatMessages, sendUserMessage, setCurrentView, setTrackingOrderId, setIsStoryOpen } = useOrder();
@@ -158,7 +158,7 @@ export const LuluConciergeChat: React.FC = () => {
         </form>
 
         <div className="mt-2 flex items-center justify-between text-[10px] text-stone-400">
-          <span>Official line: +1 {LULU_PHONE_NUMBER}</span>
+          <span>Official line: {LULU_PHONE_DISPLAY}</span>
           <a
             href={`https://wa.me/${LULU_PHONE_NUMBER}`}
             target="_blank"
