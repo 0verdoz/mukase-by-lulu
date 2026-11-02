@@ -1,10 +1,10 @@
 import { CartItem, CustomerDetails, Order } from '../types';
 
-export const LULU_PHONE_NUMBER = '18622162976'; // Lulu's official business WhatsApp/SMS line
-export const LULU_PHONE_DISPLAY = '+1 (862) 216-2976'; // Formatted display for UI text
+export const LULU_PHONE_NUMBER = '13477067462'; // Lulu's official business WhatsApp/SMS line
+export const LULU_PHONE_DISPLAY = '+1 (347) 706-7462'; // Formatted display for UI text
 export const LULU_CASHAPP_TAG = '$KingPilato';
 export const LULU_ZELLE_CONTACT = 'orders@mukasebylulu.com (347-706-7462)';
-export const LULU_APPLE_CASH = '18622162976';
+export const LULU_APPLE_CASH = '13477067462';
 
 /**
  * Generate a unique 6-character order tracking code
