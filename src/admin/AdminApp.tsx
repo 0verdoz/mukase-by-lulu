@@ -16,9 +16,12 @@ export const AdminApp: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const storeUrl = (import.meta as any).env?.VITE_STORE_URL || (isLocal ? 'http://localhost:3000' : 'https://mukase-by-lulu.vercel.app');
+
   const handleExitToStore = () => {
     // Navigate to customer storefront on port 3000
-    window.location.href = 'http://localhost:3000';
+    window.location.href = storeUrl;
   };
 
   return (
@@ -38,12 +41,12 @@ export const AdminApp: React.FC = () => {
           </div>
 
           <a
-            href="http://localhost:3000"
+            href={storeUrl}
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors font-medium"
           >
-            <span>Customer Store (Port 3000)</span>
+            <span>Customer Store</span>
             <ExternalLink className="w-3 h-3" />
           </a>
         </div>
