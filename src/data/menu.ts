@@ -198,7 +198,7 @@ export const MENU_ITEMS: MenuItem[] = [
     category: 'soups-stews',
     price: 28.00,
     description: '',
-    image: '/assets/images/waakye_realistic_1792548345012.jpeg',
+    image: '/assets/images/waakye_original.jpeg',
     tag: 'Signature Platter',
     spicyLevel: 2,
     isCustomizable: false,
