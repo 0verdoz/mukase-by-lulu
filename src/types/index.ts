@@ -20,7 +20,7 @@ export interface MenuItem {
   name: string;
   category: MenuCategory;
   price: number;
-  description: string;
+  description?: string;
   image: string;
   tag?: string;
   spicyLevel?: number; // 0 to 3
