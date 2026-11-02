@@ -69,7 +69,7 @@ let orders: Order[] = [
           category: 'yam-cassava',
           price: 20.00,
           description: 'Crispy thick-cut Ghanaian pona yam chips fried golden with wings.',
-          image: '/assets/images/fried_yam_wings_real_1792537754730.jpg',
+          image: '/assets/images/fried_yam_wings_real_1792537754730.jpeg',
         },
         quantity: 1,
         itemTotalPrice: 20.00,
@@ -119,7 +119,7 @@ let orders: Order[] = [
           category: 'banku-fufu',
           price: 30.00,
           description: 'Authentic Ghanaian fermented corn and cassava Banku dumpling with seafood okro soup.',
-          image: '/assets/images/food_banku_okro_soup_1792535657171.jpg',
+          image: '/assets/images/food_banku_okro_soup_1792535657171.jpeg',
         },
         quantity: 1,
         customization: {

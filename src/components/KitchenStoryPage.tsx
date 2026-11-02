@@ -17,7 +17,7 @@ export const KitchenStoryPage: React.FC = () => {
       <header className="relative bg-stone-950 text-white overflow-hidden py-16 sm:py-24 border-b border-stone-800">
         <div className="absolute inset-0 z-0 opacity-40">
           <img
-            src="/assets/images/kitchen_hearth_story_1792548370365.jpg"
+            src="/assets/images/kitchen_hearth_story_1792548370365.jpeg"
             alt="Authentic Ghanaian Mukase hearth kitchen with cast iron pot simmering on open firewood"
             className="w-full h-full object-cover object-center filter saturate-110"
             referrerPolicy="no-referrer"
@@ -97,7 +97,7 @@ export const KitchenStoryPage: React.FC = () => {
           <div className="md:col-span-5">
             <div className="relative rounded-2xl overflow-hidden shadow-xl border border-stone-200/90 aspect-[4/3] group">
               <img
-                src="/assets/images/fufu_goat_realistic_1792548343545.jpg"
+                src="/assets/images/fufu_goat_realistic_1792548343545.jpeg"
                 alt="Ghanaian culinary master stirring golden goat light soup over hearth"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 referrerPolicy="no-referrer"
@@ -117,7 +117,7 @@ export const KitchenStoryPage: React.FC = () => {
             <div className="md:col-span-5 order-2 md:order-1">
               <div className="relative rounded-2xl overflow-hidden shadow-lg border border-amber-100 aspect-[4/3] group">
                 <img
-                  src="/assets/images/shito_jar_realistic_1792548387313.jpg"
+                  src="/assets/images/shito_jar_realistic_1792548387313.jpeg"
                   alt="Jar of artisanal slow-cooked black shito pepper sauce with wooden spoon"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   referrerPolicy="no-referrer"
@@ -187,7 +187,7 @@ export const KitchenStoryPage: React.FC = () => {
             <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-4 hover:border-amber-400 transition-colors">
               <div className="rounded-xl overflow-hidden aspect-[4/3]">
                 <img
-                  src="/assets/images/waakye_realistic_1792548345012.jpg"
+                  src="/assets/images/waakye_realistic_1792548345012.jpeg"
                   alt="Accra street waakye rice and beans platter with spaghetti, gari, and shito on banana leaf"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
@@ -203,7 +203,7 @@ export const KitchenStoryPage: React.FC = () => {
             <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm space-y-4 hover:border-amber-400 transition-colors">
               <div className="rounded-xl overflow-hidden aspect-[4/3]">
                 <img
-                  src="/assets/images/banku_okro_realistic_1792548327249.jpg"
+                  src="/assets/images/banku_okro_realistic_1792548327249.jpeg"
                   alt="Steamed Banku in traditional clay asanka bowl filled with rich crab okro soup"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
@@ -248,7 +248,7 @@ export const KitchenStoryPage: React.FC = () => {
             <div className="md:col-span-5 flex justify-center">
               <div className="rounded-2xl overflow-hidden border border-stone-700 shadow-2xl aspect-[4/3] w-full max-w-sm">
                 <img
-                  src="/assets/images/fried_yam_fish_realistic_1792548345718.jpg"
+                  src="/assets/images/fried_yam_fish_realistic_1792548345718.jpeg"
                   alt="Crispy white pona yam chips served with seasoned fried whole red fish and dark shito"
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
