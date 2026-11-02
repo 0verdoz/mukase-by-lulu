@@ -56,7 +56,7 @@ export const Navbar: React.FC = () => {
               currentView === 'track' ? 'text-amber-700 font-semibold border-b-2 border-amber-600' : ''
             }`}
           >
-            Track Order
+            Order Status
           </button>
           <button
             onClick={() => setIsChatOpen(true)}
@@ -124,7 +124,7 @@ export const Navbar: React.FC = () => {
             }`}
           >
             <Clock className="w-4 h-4 text-amber-600" />
-            <span>Live Order Tracker</span>
+            <span>Order Status</span>
           </button>
 
           <button

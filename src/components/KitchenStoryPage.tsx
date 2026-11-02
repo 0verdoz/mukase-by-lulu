@@ -320,7 +320,7 @@ export const KitchenStoryPage: React.FC = () => {
               className="inline-flex items-center gap-2 px-6 py-3.5 bg-white hover:bg-stone-50 text-stone-700 border border-stone-200 rounded-xl text-sm font-semibold transition-colors"
             >
               <Clock className="w-4 h-4 text-amber-600" />
-              <span>Track Active Order</span>
+              <span>Check Order Status</span>
             </button>
           </div>
         </section>

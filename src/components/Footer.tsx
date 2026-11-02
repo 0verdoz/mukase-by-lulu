@@ -65,7 +65,7 @@ export const Footer: React.FC = () => {
                   onClick={() => setCurrentView('track')}
                   className="hover:text-white transition-colors"
                 >
-                  Live Order Tracker
+                  Check Order Status
                 </button>
               </li>
               <li>

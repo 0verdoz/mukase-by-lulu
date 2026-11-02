@@ -108,3 +108,12 @@ export function isApplePlatform(): boolean {
   const ua = window.navigator.userAgent.toLowerCase();
   return /iphone|ipad|ipod|macintosh/.test(ua);
 }
+
+/**
+ * Detect if user is on a mobile device (phone or tablet)
+ */
+export function isMobileDevice(): boolean {
+  if (typeof window === 'undefined' || !window.navigator) return false;
+  const ua = window.navigator.userAgent.toLowerCase();
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(ua);
+}

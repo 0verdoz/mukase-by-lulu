@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CheckCircle2, Copy, Check, MessageSquare, ArrowRight, ShieldCheck, AlertCircle, UploadCloud, RefreshCw, Eye } from 'lucide-react';
 import { Order } from '../types';
 import { useOrder } from '../context/OrderContext';
-import { getWhatsAppUrl, getSmsUrl, isApplePlatform, formatOrderMessage, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
+import { getWhatsAppUrl, getSmsUrl, isApplePlatform, isMobileDevice, formatOrderMessage, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
 
 interface Props {
   order: Order;
@@ -134,12 +134,23 @@ export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
                 <span>Open in WhatsApp</span>
               </a>
 
-              <a
-                href={getSmsUrl(order, isApple)}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-medium text-xs shadow-sm transition-colors"
-              >
-                <span>{isApple ? 'Open in iMessage' : 'Open in SMS'}</span>
-              </a>
+              {isMobileDevice() ? (
+                <a
+                  href={getSmsUrl(order, isApple)}
+                  className="flex items-center justify-center gap-2 py-2.5 px-4 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-medium text-xs shadow-sm transition-colors"
+                >
+                  <span>{isApple ? 'Open in iMessage' : 'Open in SMS'}</span>
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleCopyMessage}
+                  className="flex items-center justify-center gap-2 py-2.5 px-4 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-medium text-xs shadow-sm transition-colors"
+                >
+                  <Copy className="w-4 h-4" />
+                  <span>{copiedMsg ? 'Order Text Copied!' : 'Copy Order Text'}</span>
+                </button>
+              )}
             </div>
 
             <button
@@ -283,7 +294,7 @@ export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
             onClick={goToTracking}
             className="flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm transition-all"
           >
-            <span>Track Order & Delivery</span>
+            <span>View Order Status</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

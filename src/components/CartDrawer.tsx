@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Trash2, Plus, Minus, MessageSquare, ArrowRight, ShieldCheck, Phone, MapPin, User, CreditCard } from 'lucide-react';
 import { useOrder } from '../context/OrderContext';
-import { getWhatsAppUrl, getSmsUrl, isApplePlatform, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
+import { getWhatsAppUrl, getSmsUrl, isApplePlatform, isMobileDevice, formatOrderMessage, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
 import { PaymentMethod } from '../types';
 
 export const CartDrawer: React.FC = () => {
@@ -43,7 +43,7 @@ export const CartDrawer: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleCheckout = (channel: 'whatsapp' | 'imessage' | 'sms' | 'concierge_chat') => {
+  const handleCheckout = (channel: 'whatsapp' | 'imessage' | 'sms' | 'concierge_chat' | 'direct') => {
     if (!validateCustomer()) {
       return;
     }
@@ -54,8 +54,13 @@ export const CartDrawer: React.FC = () => {
       const url = getWhatsAppUrl(order);
       window.open(url, '_blank');
     } else if (channel === 'imessage' || channel === 'sms') {
-      const url = getSmsUrl(order, channel === 'imessage' || isApple);
-      window.location.href = url;
+      if (isMobileDevice()) {
+        const url = getSmsUrl(order, channel === 'imessage' || isApple);
+        window.location.href = url;
+      } else {
+        const message = formatOrderMessage(order);
+        navigator.clipboard?.writeText(message).catch(() => {});
+      }
     } else if (channel === 'concierge_chat') {
       setIsChatOpen(true);
     }
@@ -385,28 +390,44 @@ export const CartDrawer: React.FC = () => {
               </div>
             </div>
 
-            {/* Direct Messaging Dispatch Buttons */}
+            {/* Direct In-App Checkout & Alternative Dispatch Buttons */}
             <div className="space-y-2 pt-1">
               
-              {/* WhatsApp Primary Button */}
+              {/* Primary Direct Order Button (No App / Phone Link Required) */}
               <button
                 type="button"
-                onClick={() => handleCheckout('whatsapp')}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm transition-all"
+                onClick={() => handleCheckout('direct')}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-amber-600/20 transition-all"
               >
-                <span>Order via WhatsApp (Instant Dispatch)</span>
+                <span>Confirm & Place Order Directly</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
-              {/* iMessage / SMS Button (Adapts to iOS or Android) */}
-              <button
-                type="button"
-                onClick={() => handleCheckout(isApple ? 'imessage' : 'sms')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm transition-all"
-              >
-                <span>{isApple ? 'Order via iMessage (Apple Users)' : 'Order via Universal SMS'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="relative flex py-0.5 items-center">
+                <div className="flex-grow border-t border-stone-200"></div>
+                <span className="flex-shrink mx-2 text-[10px] uppercase font-bold text-stone-400">or send via message</span>
+                <div className="flex-grow border-t border-stone-200"></div>
+              </div>
+
+              {/* Messaging Options */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleCheckout('whatsapp')}
+                  className="flex items-center justify-center gap-1.5 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>WhatsApp</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleCheckout(isApple ? 'imessage' : 'sms')}
+                  className="flex items-center justify-center gap-1.5 py-2 px-3 bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+                >
+                  <span>{isApple ? 'iMessage' : 'SMS'}</span>
+                </button>
+              </div>
 
               {/* In-App Concierge Chat Alternative */}
               <button

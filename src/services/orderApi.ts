@@ -1,11 +1,15 @@
 import { Order, OrderStatus } from '../types';
 
-const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000/api';
+const isBrowser = typeof window !== 'undefined';
+const isLocalhost = isBrowser && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const configuredApi = (import.meta as any).env?.VITE_API_URL;
+const API_BASE = configuredApi || (isLocalhost ? 'http://localhost:5000/api' : '');
 
 /**
  * Check if the backend sync server is reachable
  */
 export async function checkServerHealth(): Promise<boolean> {
+  if (!API_BASE) return false;
   try {
     const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(2000) });
     return res.ok;
@@ -18,6 +22,7 @@ export async function checkServerHealth(): Promise<boolean> {
  * Fetch all orders from the shared sync server
  */
 export async function fetchRemoteOrders(): Promise<Order[] | null> {
+  if (!API_BASE) return null;
   try {
     const res = await fetch(`${API_BASE}/orders`, { signal: AbortSignal.timeout(3000) });
     if (!res.ok) return null;
@@ -32,6 +37,7 @@ export async function fetchRemoteOrders(): Promise<Order[] | null> {
  * Push newly placed customer order to the shared sync server
  */
 export async function pushRemoteOrder(order: Order): Promise<boolean> {
+  if (!API_BASE) return false;
   try {
     const res = await fetch(`${API_BASE}/orders`, {
       method: 'POST',
@@ -55,6 +61,7 @@ export async function updateRemoteOrderStatus(
   riderName?: string,
   riderPhone?: string
 ): Promise<Order | null> {
+  if (!API_BASE) return null;
   try {
     const res = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderId)}/status`, {
       method: 'PATCH',
@@ -71,12 +78,19 @@ export async function updateRemoteOrderStatus(
 }
 
 /**
- * Push payment proof verification to the shared server
+ * Submit payment verification proof to shared server
  */
 export async function submitRemotePaymentProof(
   orderId: string,
-  proof: { transactionId: string; senderHandle: string; memoEntered: string }
+  proof: {
+    transactionId: string;
+    memoEntered: string;
+    amountPaid: number;
+    senderHandle: string;
+    rawText?: string;
+  }
 ): Promise<Order | null> {
+  if (!API_BASE) return null;
   try {
     const res = await fetch(`${API_BASE}/orders/${encodeURIComponent(orderId)}/proof`, {
       method: 'POST',
@@ -100,6 +114,11 @@ export function subscribeToSyncStream(callbacks: {
   onOrderUpdated?: (order: Order) => void;
   onStatusChange?: (connected: boolean) => void;
 }): () => void {
+  if (!API_BASE) {
+    callbacks.onStatusChange?.(false);
+    return () => {};
+  }
+
   const eventsUrl = `${API_BASE}/events`;
   let eventSource: EventSource | null = null;
   let retryTimer: any = null;
@@ -129,12 +148,11 @@ export function subscribeToSyncStream(callbacks: {
         callbacks.onStatusChange?.(false);
         eventSource?.close();
         eventSource = null;
-        // Exponential/gentle reconnection
-        retryTimer = setTimeout(connect, 4000);
+        retryTimer = setTimeout(connect, 6000);
       };
     } catch {
       callbacks.onStatusChange?.(false);
-      retryTimer = setTimeout(connect, 5000);
+      retryTimer = setTimeout(connect, 8000);
     }
   }
 

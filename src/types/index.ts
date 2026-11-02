@@ -100,7 +100,7 @@ export interface Order {
   estimatedDeliveryMinutes: number;
   riderName?: string;
   riderPhone?: string;
-  channel: 'whatsapp' | 'imessage' | 'sms' | 'concierge_chat';
+  channel: 'whatsapp' | 'imessage' | 'sms' | 'concierge_chat' | 'direct';
 }
 
 export interface ChatMessage {

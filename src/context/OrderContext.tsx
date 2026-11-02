@@ -29,7 +29,7 @@ interface OrderContextType {
   orders: Order[];
   activeOrder: Order | null;
   setActiveOrder: (order: Order | null) => void;
-  createOrder: (channel?: 'whatsapp' | 'imessage' | 'sms' | 'concierge_chat') => Order;
+  createOrder: (channel?: 'whatsapp' | 'imessage' | 'sms' | 'concierge_chat' | 'direct') => Order;
   submitPaymentProof: (orderId: string, proof: {
     transactionId: string;
     memoEntered: string;
@@ -405,7 +405,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const cartTotal = cart.reduce((sum, item) => sum + item.itemTotalPrice, 0);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const createOrder = (channel: 'whatsapp' | 'imessage' | 'sms' | 'concierge_chat' = 'whatsapp'): Order => {
+  const createOrder = (channel: 'whatsapp' | 'imessage' | 'sms' | 'concierge_chat' | 'direct' = 'direct'): Order => {
     const subtotal = cartTotal;
     const deliveryFee = 4.99;
     const tax = +(subtotal * 0.08).toFixed(2);

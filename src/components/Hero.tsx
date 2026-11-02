@@ -47,7 +47,7 @@ export const Hero: React.FC = () => {
                 className="inline-flex items-center gap-2 px-5 py-3.5 text-base font-medium text-stone-700 bg-white hover:bg-stone-50 border border-stone-200 transition-colors rounded-xl shadow-sm whitespace-nowrap"
               >
                 <Clock className="w-4 h-4 text-amber-600" />
-                <span>Track Active Order</span>
+                <span>Check Order Status</span>
               </button>
 
               <button
