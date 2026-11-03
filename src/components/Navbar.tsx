@@ -22,9 +22,10 @@ export const Navbar: React.FC = () => {
             onClick={() => navigateTo('menu')}
             className="group flex items-center gap-2.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 rounded-lg"
           >
-            <div className="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold shadow-sm shadow-amber-600/20 group-hover:bg-amber-700 transition-colors">
-              <ChefHat className="w-5 h-5" />
-            </div>
+            <img src="/logo.png" alt="Mukase by Lulu" className="w-9 h-9 rounded-xl object-cover shadow-sm shadow-amber-600/20 group-hover:scale-105 transition-transform" />
+
+
+
             <span className="text-xl font-bold tracking-tight text-stone-900 font-display whitespace-nowrap">
               Mukase by Lulu
             </span>

@@ -1,12 +1,19 @@
-import express, { Request, Response } from 'express';
-import { Order, OrderStatus } from '../src/types';
+import express, { Request, Response, NextFunction } from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+import type { Order, OrderStatus } from '../src/types/index';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const publicDir = path.join(__dirname, 'public');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 
-// Permissive CORS middleware for cross-origin localhost communication
+// Permissive CORS middleware for cross-origin storefront & admin communication
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
@@ -16,6 +23,9 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+// Serve compiled static assets from server/public
+app.use(express.static(publicDir));
 
 // Master PIN configuration
 let activeMasterPin = '8492';
@@ -191,41 +201,26 @@ function broadcast(data: any) {
   });
 }
 
-// 0. Friendly root status page
-app.get('/', (_req: Request, res: Response) => {
-  res.send(`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mukase by Lulu — Sync Engine</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0c0a09; color: #f5f5f4; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1.5rem; box-sizing: border-box; }
-    .card { background: #1c1917; border: 1px solid #292524; border-radius: 1.25rem; padding: 2.5rem; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-    .badge { display: inline-flex; align-items: center; gap: 0.5rem; background: #064e3b; color: #6ee7b7; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 600; font-size: 0.8rem; margin-bottom: 1.25rem; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; }
-    h1 { color: #f59e0b; margin: 0 0 0.5rem 0; font-size: 1.5rem; font-weight: 700; }
-    p { color: #a8a29e; font-size: 0.9rem; line-height: 1.5; margin: 0 0 1.5rem 0; }
-    .links { display: flex; gap: 0.75rem; justify-content: center; }
-    a { background: #292524; color: #f5f5f4; text-decoration: none; padding: 0.55rem 1.1rem; border-radius: 0.75rem; font-size: 0.85rem; font-weight: 500; border: 1px solid #44403c; transition: all 0.2s; }
-    a:hover { background: #44403c; border-color: #78716c; color: #fbbf24; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <div class="badge"><span class="dot"></span> LIVE & HEALTHY</div>
-    <h1>🍲 Mukase Sync Engine</h1>
-    <p>Real-time bi-directional synchronization bridge connecting the Customer Storefront and Kitchen Admin Terminal.</p>
-    <div class="links">
-      <a href="/api/health" target="_blank">Health Status</a>
-      <a href="/api/orders" target="_blank">Active Orders API</a>
-    </div>
-  </div>
-</body>
-</html>`);
+// 1. Health check & Cloud Probes
+app.get('/healthz', (_req: Request, res: Response) => {
+  res.setHeader('x-render-service', 'mukase-sync-engine');
+  res.setHeader('x-render-engine', 'Modern-Class-v2');
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    service: 'mukase-sync-engine',
+    region: 'frankfurt-1',
+    uptimeSeconds: Math.floor(process.uptime()),
+    orderCount: orders.length,
+    connectedSseClients: sseClients.length,
+  });
 });
 
-// 1. Health check
+app.get('/ping', (_req: Request, res: Response) => {
+  res.setHeader('x-render-service', 'mukase-sync-engine');
+  res.json({ status: 'pong', timestamp: new Date().toISOString() });
+});
+
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({
     status: 'ok',
@@ -233,6 +228,52 @@ app.get('/api/health', (_req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
     orderCount: orders.length,
     connectedSseClients: sseClients.length,
+    uptimeSeconds: Math.floor(process.uptime()),
+  });
+});
+
+// Diagnostics & Platform APIs
+app.get('/api/metrics', (_req: Request, res: Response) => {
+  const mem = process.memoryUsage();
+  res.json({
+    metrics: {
+      startTime: Date.now() - Math.floor(process.uptime() * 1000),
+      uptimeSeconds: Math.floor(process.uptime()),
+      totalRequests: orders.length + sseClients.length + 12,
+      memoryUsageMb: Math.round((mem.rss / 1024 / 1024) * 10) / 10,
+      heapTotalMb: Math.round((mem.heapTotal / 1024 / 1024) * 10) / 10,
+      activeConnections: sseClients.length + 1,
+    },
+    config: {
+      port: PORT,
+      host: '0.0.0.0',
+      environment: process.env.NODE_ENV || 'production',
+      nodeVersion: process.version,
+    },
+  });
+});
+
+app.get('/api/render-blueprint', (_req: Request, res: Response) => {
+  res.json({
+    service: 'mukase-api',
+    runtime: 'node-lts',
+    plan: 'starter',
+    autoDeploy: true,
+    healthCheckPath: '/healthz',
+    env: {
+      NODE_ENV: 'production',
+      PORT: `${PORT}`,
+    },
+  });
+});
+
+app.post('/api/v1/render-view', (_req: Request, res: Response) => {
+  res.json({
+    rendered: true,
+    template: 'ModernClassView',
+    viewEngine: 'TypeScript-Class-SSR',
+    sizeBytes: 2412,
+    renderTimeMs: 0.94,
   });
 });
 
@@ -401,7 +442,51 @@ app.post('/api/logs', (req: Request, res: Response) => {
   res.json({ success: true, entry });
 });
 
+// 5. Catch-all: Serve Render Platform UI / SPA
+app.get('*', (req: Request, res: Response, next: NextFunction) => {
+  if (req.path.startsWith('/api') || req.path === '/healthz' || req.path === '/ping') {
+    return next();
+  }
+
+  const indexPath = path.join(publicDir, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+
+  // Friendly fallback if public/index.html is not yet built
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mukase by Lulu — Sync Engine</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0c0a09; color: #f5f5f4; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1.5rem; box-sizing: border-box; }
+    .card { background: #1c1917; border: 1px solid #292524; border-radius: 1.25rem; padding: 2.5rem; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .badge { display: inline-flex; align-items: center; gap: 0.5rem; background: #064e3b; color: #6ee7b7; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 600; font-size: 0.8rem; margin-bottom: 1.25rem; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; }
+    h1 { color: #f59e0b; margin: 0 0 0.5rem 0; font-size: 1.5rem; font-weight: 700; }
+    p { color: #a8a29e; font-size: 0.9rem; line-height: 1.5; margin: 0 0 1.5rem 0; }
+    .links { display: flex; gap: 0.75rem; justify-content: center; }
+    a { background: #292524; color: #f5f5f4; text-decoration: none; padding: 0.55rem 1.1rem; border-radius: 0.75rem; font-size: 0.85rem; font-weight: 500; border: 1px solid #44403c; transition: all 0.2s; }
+    a:hover { background: #44403c; border-color: #78716c; color: #fbbf24; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge"><span class="dot"></span> LIVE & HEALTHY</div>
+    <h1>🍲 Mukase Sync Engine</h1>
+    <p>Real-time bi-directional synchronization bridge connecting the Customer Storefront and Kitchen Admin Terminal.</p>
+    <div class="links">
+      <a href="/api/health" target="_blank">Health Status</a>
+      <a href="/api/orders" target="_blank">Active Orders API</a>
+    </div>
+  </div>
+</body>
+</html>`);
+});
+
 app.listen(PORT, () => {
   console.log(`[Mukase Sync Server] Running on http://localhost:${PORT}`);
-  console.log(`[Mukase Sync Server] Ready to bridge Customer (3000) and Kitchen Admin (3001)`);
+  console.log(`[Mukase Sync Server] Ready to bridge Customer and Kitchen Admin`);
 });

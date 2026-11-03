@@ -4,7 +4,8 @@ const isBrowser = typeof window !== 'undefined';
 const isLocalhost = isBrowser && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 const rawApi = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.trim()?.replace(/\/+$/, '');
 const configuredApi = rawApi ? (rawApi.endsWith('/api') ? rawApi : `${rawApi}/api`) : '';
-const API_BASE = configuredApi || (isLocalhost ? 'http://localhost:5000/api' : '');
+const PRODUCTION_API_URL = 'https://mukase-api.onrender.com/api';
+const API_BASE = configuredApi || (isLocalhost ? 'http://localhost:5000/api' : PRODUCTION_API_URL);
 
 /**
  * Check if the backend sync server is reachable

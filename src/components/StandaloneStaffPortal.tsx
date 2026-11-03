@@ -108,7 +108,9 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-600 flex items-center justify-center text-white shadow-md shadow-amber-600/30">
+            <img src="/logo.png" alt="Mukase Kitchen Terminal" className="w-9 h-9 rounded-xl object-cover shadow-md shadow-amber-600/30 border border-stone-800" />
+            <div className="hidden">
+              <span className="logo-placeholder" />
               <ChefHat className="w-5 h-5" />
             </div>
             <div>

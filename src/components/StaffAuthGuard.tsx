@@ -96,9 +96,8 @@ export const StaffAuthGuard: React.FC<Props> = ({ children, onExitToStore }) => 
         
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-amber-600/15 border border-amber-500/30 text-amber-500 flex items-center justify-center mx-auto shadow-inner">
-            <Lock className="w-7 h-7" />
-          </div>
+          <img src="/logo.png" alt="Mukase Kitchen Logo" className="w-14 h-14 rounded-2xl object-cover mx-auto shadow-md border border-stone-800" />
+
           <h1 className="text-xl font-bold font-display text-white tracking-tight">
             Mukase Kitchen Terminal
           </h1>
