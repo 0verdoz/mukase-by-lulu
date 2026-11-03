@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ShoppingBag, ChefHat, MessageSquare, Menu, X, BookOpen, Clock, Utensils } from 'lucide-react';
+import { ShoppingBag, MessageSquare, Menu, X, BookOpen, Clock, Utensils } from 'lucide-react';
 import { useOrder } from '../context/OrderContext';
+import { SteamPotIcon } from './SteamPotIcon';
 
 export const Navbar: React.FC = () => {
   const { cartCount, cartTotal, setIsCartOpen, currentView, setCurrentView, setIsChatOpen } = useOrder();
@@ -22,9 +23,7 @@ export const Navbar: React.FC = () => {
             onClick={() => navigateTo('menu')}
             className="group flex items-center gap-2.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 rounded-lg"
           >
-            <img src="/logo.png" alt="Mukase by Lulu" className="w-9 h-9 rounded-xl object-cover shadow-sm shadow-amber-600/20 group-hover:scale-105 transition-transform" />
-
-
+            <SteamPotIcon size={34} className="group-hover:scale-105 transition-transform" />
 
             <span className="text-xl font-bold tracking-tight text-stone-900 font-display whitespace-nowrap">
               Mukase by Lulu
@@ -143,4 +142,3 @@ export const Navbar: React.FC = () => {
     </header>
   );
 };
-

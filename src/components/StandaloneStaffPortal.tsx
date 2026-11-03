@@ -8,6 +8,7 @@ import { useOrder } from '../context/OrderContext';
 import { Order, OrderStatus } from '../types';
 import { StaffSession, clearStaffSession, getSecurityLogs, setCustomStaffPin, getActiveStaffPin } from '../utils/staffAuth';
 import { getWhatsAppUrl, getSmsUrl } from '../utils/checkout';
+import { SteamPotIcon } from './SteamPotIcon';
 
 interface Props {
   session: StaffSession;
@@ -108,7 +109,7 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Mukase Kitchen Terminal" className="w-9 h-9 rounded-xl object-cover shadow-md shadow-amber-600/30 border border-stone-800" />
+            <SteamPotIcon size={34} />
             <div className="hidden">
               <span className="logo-placeholder" />
               <ChefHat className="w-5 h-5" />

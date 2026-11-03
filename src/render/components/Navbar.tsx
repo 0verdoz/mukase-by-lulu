@@ -1,3 +1,4 @@
+import { SteamPotIcon } from './SteamPotIcon';
 import React from 'react';
 import { Box, Play, FileCode2, ExternalLink, RefreshCw } from 'lucide-react';
 import { TabType } from '../types';
@@ -24,7 +25,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand */}
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="Mukase Logo" className="h-9 w-9 rounded-lg object-cover border border-zinc-700/60 shadow-inner" />
+            <SteamPotIcon size={34} />
             <div className="hidden">
               <Box className="h-5 w-5 text-emerald-400" />
             </div>

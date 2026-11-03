@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Lock, ShieldCheck, AlertTriangle, KeyRound, ArrowLeft, Clock, Eye, EyeOff } from 'lucide-react';
 import { authenticateStaff, getCurrentStaffSession, getLockoutRemainingSeconds, DEFAULT_MASTER_PIN, StaffSession } from '../utils/staffAuth';
+import { SteamPotIcon } from './SteamPotIcon';
 
 interface Props {
   children: (session: StaffSession) => React.ReactNode;
@@ -96,7 +97,9 @@ export const StaffAuthGuard: React.FC<Props> = ({ children, onExitToStore }) => 
         
         {/* Header */}
         <div className="text-center space-y-2">
-          <img src="/logo.png" alt="Mukase Kitchen Logo" className="w-14 h-14 rounded-2xl object-cover mx-auto shadow-md border border-stone-800" />
+          <div className="flex justify-center pb-1">
+            <SteamPotIcon size={52} />
+          </div>
 
           <h1 className="text-xl font-bold font-display text-white tracking-tight">
             Mukase Kitchen Terminal
