@@ -2,7 +2,8 @@ import { Order, OrderStatus } from '../types';
 
 const isBrowser = typeof window !== 'undefined';
 const isLocalhost = isBrowser && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-const configuredApi = (import.meta as any).env?.VITE_API_URL;
+const rawApi = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.trim()?.replace(/\/+$/, '');
+const configuredApi = rawApi ? (rawApi.endsWith('/api') ? rawApi : `${rawApi}/api`) : '';
 const API_BASE = configuredApi || (isLocalhost ? 'http://localhost:5000/api' : '');
 
 /**

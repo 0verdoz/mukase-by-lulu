@@ -191,6 +191,40 @@ function broadcast(data: any) {
   });
 }
 
+// 0. Friendly root status page
+app.get('/', (_req: Request, res: Response) => {
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mukase by Lulu — Sync Engine</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0c0a09; color: #f5f5f4; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1.5rem; box-sizing: border-box; }
+    .card { background: #1c1917; border: 1px solid #292524; border-radius: 1.25rem; padding: 2.5rem; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .badge { display: inline-flex; align-items: center; gap: 0.5rem; background: #064e3b; color: #6ee7b7; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 600; font-size: 0.8rem; margin-bottom: 1.25rem; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; }
+    h1 { color: #f59e0b; margin: 0 0 0.5rem 0; font-size: 1.5rem; font-weight: 700; }
+    p { color: #a8a29e; font-size: 0.9rem; line-height: 1.5; margin: 0 0 1.5rem 0; }
+    .links { display: flex; gap: 0.75rem; justify-content: center; }
+    a { background: #292524; color: #f5f5f4; text-decoration: none; padding: 0.55rem 1.1rem; border-radius: 0.75rem; font-size: 0.85rem; font-weight: 500; border: 1px solid #44403c; transition: all 0.2s; }
+    a:hover { background: #44403c; border-color: #78716c; color: #fbbf24; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge"><span class="dot"></span> LIVE & HEALTHY</div>
+    <h1>🍲 Mukase Sync Engine</h1>
+    <p>Real-time bi-directional synchronization bridge connecting the Customer Storefront and Kitchen Admin Terminal.</p>
+    <div class="links">
+      <a href="/api/health" target="_blank">Health Status</a>
+      <a href="/api/orders" target="_blank">Active Orders API</a>
+    </div>
+  </div>
+</body>
+</html>`);
+});
+
 // 1. Health check
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({
