@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Search, CheckCircle2, Clock, ChefHat, Bike, MapPin, Phone, ShieldCheck, AlertCircle, Copy, Check, MessageSquare } from 'lucide-react';
 import { useOrder } from '../context/OrderContext';
 import { OrderStatus } from '../types';
-import { LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
+import { LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT, getWhatsAppUrl } from '../utils/checkout';
 
 const STATUS_STEPS: { key: OrderStatus; label: string; desc: string }[] = [
   { key: 'pending_payment', label: 'Order Placed', desc: 'Awaiting payment verification' },

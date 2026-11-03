@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CartItem, CustomerDetails, MenuItem, Order, OrderStatus, SelectedCustomization, ChatMessage } from '../types';
 import { generateOrderCode, LULU_CASHAPP_TAG } from '../utils/checkout';
-import { analyzePaymentProof, registerTransactionId } from '../utils/fraudVerification';
 import {
   fetchRemoteOrders,
   pushRemoteOrder,
   updateRemoteOrderStatus,
   submitRemotePaymentProof,
   subscribeToSyncStream,
+  fetchRemoteSettings,
+  updateRemoteSettings,
+  AppSettings,
 } from '../services/orderApi';
 
 const STORAGE_KEY_ORDERS = 'mukase_orders_list';
@@ -69,6 +71,8 @@ interface OrderContextType {
   // Kitchen Story Modal
   isStoryOpen: boolean;
   setIsStoryOpen: (open: boolean) => void;
+  checkoutMode: 'hybrid' | 'whatsapp_only';
+  setCheckoutMode: (mode: 'hybrid' | 'whatsapp_only') => void;
 }
 
 const DEFAULT_CUSTOMER: CustomerDetails = {
@@ -267,6 +271,21 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [currentView, setCurrentView] = useState<'menu' | 'story' | 'track' | 'kitchen'>('menu');
   const [trackingOrderId, setTrackingOrderId] = useState<string>('MUK-4821');
+  const [checkoutMode, setCheckoutModeState] = useState<'hybrid' | 'whatsapp_only'>(() => {
+    try {
+      return (localStorage.getItem('mukase_checkout_mode') as 'hybrid' | 'whatsapp_only') || 'hybrid';
+    } catch {
+      return 'hybrid';
+    }
+  });
+
+  const setCheckoutMode = (mode: 'hybrid' | 'whatsapp_only') => {
+    setCheckoutModeState(mode);
+    try {
+      localStorage.setItem('mukase_checkout_mode', mode);
+    } catch {}
+    updateRemoteSettings({ checkoutMode: mode }).catch(() => {});
+  };
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [customizingItem, setCustomizingItem] = useState<MenuItem | null>(null);
@@ -315,6 +334,13 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     let isMounted = true;
 
+    // Fetch latest remote settings and orders on mount
+    fetchRemoteSettings().then(s => {
+      if (isMounted && s?.checkoutMode) {
+        setCheckoutModeState(s.checkoutMode);
+      }
+    });
+
     // Fetch latest remote orders on mount
     fetchRemoteOrders().then(remoteOrders => {
       if (isMounted && remoteOrders && remoteOrders.length > 0) {
@@ -339,6 +365,12 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (!isMounted) return;
         setOrders(prev => prev.map(o => o.id === updatedOrder.id ? updatedOrder : o));
         setActiveOrder(prev => (prev && prev.id === updatedOrder.id ? updatedOrder : prev));
+      },
+      onSettingsUpdated: (settings) => {
+        if (!isMounted) return;
+        if (settings.checkoutMode) {
+          setCheckoutModeState(settings.checkoutMode);
+        }
       },
     });
 
@@ -455,10 +487,10 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const submitPaymentProof = (orderId: string, proof: {
-    transactionId: string;
-    memoEntered: string;
-    amountPaid: number;
-    senderHandle: string;
+    transactionId?: string;
+    memoEntered?: string;
+    amountPaid?: number;
+    senderHandle?: string;
     proofImageUrl?: string;
     rawText?: string;
   }) => {
@@ -467,59 +499,38 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return { success: false, message: 'Order not found.', score: 0 };
     }
 
-    const analysis = analyzePaymentProof(targetOrder, proof);
-
-    // If legitimate or manual review, we store the proof
-    const newStatus: OrderStatus = analysis.isLegitimate ? 'payment_verified' : 'pending_payment';
-
-    if (analysis.isLegitimate) {
-      registerTransactionId(proof.transactionId);
-    }
-
     const updatedProof = {
       method: targetOrder.customer.preferredPayment,
       senderTagOrName: proof.senderHandle || targetOrder.customer.paymentIdentifier,
-      transactionId: proof.transactionId,
+      transactionId: proof.transactionId || 'Awaiting Confirmation',
       proofImageUrl: proof.proofImageUrl,
       submittedAt: new Date().toISOString(),
-      verifiedAt: analysis.isLegitimate ? new Date().toISOString() : undefined,
-      isVerified: analysis.isLegitimate,
-      memoMatched: analysis.memoMatched,
-      duplicateDetected: analysis.duplicateDetected,
-      verificationNotes: analysis.flags.join(' | ') || 'All security invariants passed (Memo matched, unique TxID, exact amount).',
+      isVerified: false,
+      memoMatched: false,
+      duplicateDetected: false,
+      verificationNotes: 'Payment notification submitted by customer. Awaiting Chef Lulu verification.',
     };
 
     setOrders(prev =>
-      prev.map(o => (o.id === orderId ? { ...o, status: newStatus, paymentProof: updatedProof } : o))
+      prev.map(o => (o.id === orderId ? { ...o, status: 'pending_payment', paymentProof: updatedProof } : o))
     );
 
     if (activeOrder && activeOrder.id === orderId) {
-      setActiveOrder(prev => (prev ? { ...prev, status: newStatus, paymentProof: updatedProof } : null));
+      setActiveOrder(prev => (prev ? { ...prev, status: 'pending_payment', paymentProof: updatedProof } : null));
     }
 
-    // Push proof to shared backend
     submitRemotePaymentProof(orderId, {
       transactionId: proof.transactionId,
       senderHandle: proof.senderHandle || targetOrder.customer.paymentIdentifier,
       memoEntered: proof.memoEntered,
     }).catch(() => {});
 
-    let feedbackMsg = '';
-    if (analysis.isLegitimate) {
-      feedbackMsg = `Payment verified! Score: ${analysis.score}/100. Chef Lulu's kitchen has been notified to fire up the pots!`;
-    } else if (analysis.duplicateDetected) {
-      feedbackMsg = `FLAGGED: Duplicate transaction ID detected. Reference "${proof.transactionId}" was already processed.`;
-    } else {
-      feedbackMsg = `Proof received (Score: ${analysis.score}/100). Flagged for quick manual approval by staff: ${analysis.flags[0] || 'Verification in progress'}`;
-    }
-
     return {
-      success: analysis.isLegitimate,
-      message: feedbackMsg,
-      score: analysis.score,
+      success: true,
+      message: 'Payment notification sent to Chef Lulu. The kitchen is verifying receipt in CashApp/Zelle and will begin preparing your meal shortly.',
+      score: 100,
     };
   };
-
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus, riderNotes?: string) => {
     setOrders(prev =>
       prev.map(o => {
@@ -646,6 +657,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         closeLegalModal,
         isStoryOpen,
         setIsStoryOpen,
+        checkoutMode,
+        setCheckoutMode,
       }}
     >
       {children}

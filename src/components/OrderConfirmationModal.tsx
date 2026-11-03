@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Copy, Check, MessageSquare, ArrowRight, ShieldCheck, AlertCircle, UploadCloud, RefreshCw, Eye } from 'lucide-react';
+import { CheckCircle2, Copy, Check, MessageSquare, ArrowRight, ShieldCheck, Clock, Phone, AlertCircle } from 'lucide-react';
 import { Order } from '../types';
 import { useOrder } from '../context/OrderContext';
 import { getWhatsAppUrl, getSmsUrl, isApplePlatform, isMobileDevice, formatOrderMessage, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
@@ -12,18 +12,10 @@ interface Props {
 export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
   const { submitPaymentProof, setCurrentView, setTrackingOrderId } = useOrder();
   const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedTag, setCopiedTag] = useState(false);
+  const [copiedZelle, setCopiedZelle] = useState(false);
   const [copiedMsg, setCopiedMsg] = useState(false);
-
-  // Verification state
-  const [transactionId, setTransactionId] = useState('');
-  const [memoEntered, setMemoEntered] = useState(order.id);
-  const [amountPaid, setAmountPaid] = useState<number>(order.total);
-  const [senderHandle, setSenderHandle] = useState(order.customer.paymentIdentifier);
-  const [verificationFeedback, setVerificationFeedback] = useState<{
-    status: 'idle' | 'success' | 'flagged' | 'error';
-    message: string;
-    score?: number;
-  }>({ status: 'idle', message: '' });
+  const [notifiedKitchen, setNotifiedKitchen] = useState(false);
 
   const isApple = isApplePlatform();
 
@@ -33,6 +25,18 @@ export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
     setTimeout(() => setCopiedCode(false), 2000);
   };
 
+  const handleCopyTag = () => {
+    navigator.clipboard.writeText(LULU_CASHAPP_TAG);
+    setCopiedTag(true);
+    setTimeout(() => setCopiedTag(false), 2000);
+  };
+
+  const handleCopyZelle = () => {
+    navigator.clipboard.writeText(LULU_ZELLE_CONTACT);
+    setCopiedZelle(true);
+    setTimeout(() => setCopiedZelle(false), 2000);
+  };
+
   const handleCopyMessage = () => {
     const formatted = formatOrderMessage(order);
     navigator.clipboard.writeText(formatted);
@@ -40,37 +44,13 @@ export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
     setTimeout(() => setCopiedMsg(false), 2000);
   };
 
-  const handleVerify = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!transactionId.trim()) {
-      setVerificationFeedback({
-        status: 'error',
-        message: 'Please enter your Transaction Reference # from your Cash App or Bank confirmation.',
-      });
-      return;
-    }
-
-    const result = submitPaymentProof(order.id, {
-      transactionId: transactionId.trim(),
-      memoEntered: memoEntered.trim(),
-      amountPaid: Number(amountPaid),
-      senderHandle: senderHandle.trim(),
-      rawText: `${senderHandle} sent $${amountPaid} to Mukase by Lulu with memo ${memoEntered}`,
+  const handleNotifySent = () => {
+    submitPaymentProof(order.id, {
+      memoEntered: order.id,
+      amountPaid: order.total,
+      senderHandle: order.customer.paymentIdentifier,
     });
-
-    if (result.success) {
-      setVerificationFeedback({
-        status: 'success',
-        message: result.message,
-        score: result.score,
-      });
-    } else {
-      setVerificationFeedback({
-        status: 'flagged',
-        message: result.message,
-        score: result.score,
-      });
-    }
+    setNotifiedKitchen(true);
   };
 
   const goToTracking = () => {
@@ -92,7 +72,7 @@ export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
           </div>
           <h2 className="text-2xl font-bold font-display">Order Code Generated!</h2>
           <p className="text-xs sm:text-sm text-amber-100 mt-1 max-w-md mx-auto">
-            Your unique order code has been created for Chef Lulu's staff to verify your meal and payment.
+            Your unique order code has been logged with Chef Lulu's kitchen line.
           </p>
 
           {/* Unique Order Code Pill */}
@@ -112,171 +92,127 @@ export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
         {/* Scrollable Content */}
         <div className="p-5 sm:p-6 space-y-6 overflow-y-auto flex-1 text-sm text-stone-700">
           
-          {/* Step 1: Dispatch to Messaging */}
+          {/* Step 1: Send Payment */}
+          <div className="p-4 bg-amber-50/70 rounded-2xl border border-amber-200/80 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-stone-900 font-display flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center">1</span>
+                <span>Send Payment to Chef Lulu</span>
+              </h3>
+              <span className="text-base font-bold text-amber-900 font-mono">${order.total.toFixed(2)}</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              {/* CashApp Card */}
+              <div className="p-3 bg-white rounded-xl border border-amber-200 flex items-center justify-between shadow-sm">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-stone-400 block">Cash App</span>
+                  <span className="text-sm font-bold font-mono text-emerald-700">{LULU_CASHAPP_TAG}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyTag}
+                  className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+                >
+                  {copiedTag ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+
+              {/* Zelle Card */}
+              <div className="p-3 bg-white rounded-xl border border-amber-200 flex items-center justify-between shadow-sm">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-stone-400 block">Zelle Phone</span>
+                  <span className="text-xs font-bold font-mono text-stone-800">{LULU_ZELLE_CONTACT}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyZelle}
+                  className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+                >
+                  {copiedZelle ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            </div>
+
+            {/* Memo Note */}
+            <div className="bg-amber-100/60 p-2.5 rounded-xl border border-amber-300/80 text-xs text-amber-950 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold">⚠️ Put Memo in Transfer:</span>
+                <span className="font-mono font-bold bg-amber-200/80 px-2 py-0.5 rounded text-amber-900">{order.id}</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopyCode}
+                className="text-xs font-semibold text-amber-800 hover:underline"
+              >
+                {copiedCode ? 'Copied!' : 'Copy Memo'}
+              </button>
+            </div>
+          </div>
+
+          {/* Step 2: Confirm / Notify Kitchen */}
           <div className="space-y-3">
             <h3 className="font-bold text-stone-900 font-display flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-stone-900 text-white text-xs flex items-center justify-center">1</span>
-              <span>Send Pre-Filled Order via Direct Message</span>
+              <span className="w-5 h-5 rounded-full bg-stone-900 text-white text-xs flex items-center justify-center">2</span>
+              <span>Notify Kitchen to Verify &amp; Start Cooking</span>
             </h3>
-            
+
             <p className="text-xs text-stone-600 leading-relaxed">
-              Click below to send your item breakdown, total (${order.total.toFixed(2)}), delivery address, and unique memo directly to Chef Lulu's kitchen line.
+              To guarantee that food is fresh and never unfulfilled, Chef Lulu personally verifies incoming transfers before firing up the kitchen.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {/* Action 1: WhatsApp (Recommended) */}
+            <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Fastest: Send Receipt on WhatsApp</span>
+                </span>
+                <span className="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-200/60 px-2 py-0.5 rounded">Instant Chat</span>
+              </div>
+              <p className="text-[11px] text-emerald-800">
+                Opens Chef Lulu's WhatsApp with your order details and memo pre-filled so she can confirm your transfer instantly.
+              </p>
               <a
                 href={getWhatsAppUrl(order)}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium text-xs shadow-sm transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-sm transition-colors"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>Open in WhatsApp</span>
+                <span>Confirm via WhatsApp with Chef Lulu</span>
               </a>
+            </div>
 
-              {isMobileDevice() ? (
-                <a
-                  href={getSmsUrl(order, isApple)}
-                  className="flex items-center justify-center gap-2 py-2.5 px-4 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-medium text-xs shadow-sm transition-colors"
-                >
-                  <span>{isApple ? 'Open in iMessage' : 'Open in SMS'}</span>
-                </a>
+            {/* Action 2: In-App Transfer Notification */}
+            <div className="p-3.5 bg-stone-50 rounded-2xl border border-stone-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-stone-600" />
+                  <span>Don't Have WhatsApp? Notify Directly</span>
+                </span>
+              </div>
+              <p className="text-[11px] text-stone-600">
+                Click below after sending your CashApp/Zelle transfer. Chef Lulu will verify the transfer in her banking app and accept your order in the kitchen terminal.
+              </p>
+
+              {notifiedKitchen ? (
+                <div className="p-2.5 rounded-xl bg-amber-100/80 border border-amber-300 text-amber-900 text-xs font-medium flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-700 shrink-0" />
+                  <span>Kitchen notified! Chef Lulu is verifying receipt of ${order.total.toFixed(2)}.</span>
+                </div>
               ) : (
                 <button
                   type="button"
-                  onClick={handleCopyMessage}
-                  className="flex items-center justify-center gap-2 py-2.5 px-4 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-medium text-xs shadow-sm transition-colors"
+                  onClick={handleNotifySent}
+                  className="w-full py-2.5 px-4 bg-stone-900 hover:bg-stone-800 text-white rounded-xl font-semibold text-xs shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
-                  <Copy className="w-4 h-4" />
-                  <span>{copiedMsg ? 'Order Text Copied!' : 'Copy Order Text'}</span>
+                  <ShieldCheck className="w-4 h-4 text-amber-400" />
+                  <span>I've Sent the Transfer — Notify Chef Lulu</span>
                 </button>
               )}
             </div>
 
-            <button
-              onClick={handleCopyMessage}
-              className="text-xs text-stone-500 hover:text-amber-800 flex items-center gap-1.5 transition-colors"
-            >
-              <Copy className="w-3.5 h-3.5" />
-              <span>{copiedMsg ? 'Full order text copied!' : 'Copy formatted text to clipboard'}</span>
-            </button>
-          </div>
-
-          {/* Step 2: Anti-Fraud Payment Instructions */}
-          <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
-            <h3 className="font-bold text-stone-900 font-display flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-stone-900 text-white text-xs flex items-center justify-center">2</span>
-              <span>Send Payment with Mandatory Memo</span>
-            </h3>
-
-            <div className="text-xs space-y-1 text-stone-600">
-              <p>
-                <strong>Destination:</strong>{' '}
-                {order.customer.preferredPayment === 'cashapp'
-                  ? `Cash App to ${LULU_CASHAPP_TAG}`
-                  : `Zelle to ${LULU_ZELLE_CONTACT}`}
-              </p>
-              <p>
-                <strong>Exact Amount:</strong>{' '}
-                <span className="font-bold text-stone-900 tabular-nums">${order.total.toFixed(2)}</span>
-              </p>
-              <p className="text-amber-900 bg-amber-50 p-2 rounded-lg border border-amber-200 font-medium">
-                ⚠️ <strong>Mandatory Note/Memo:</strong> Put <span className="font-mono font-bold text-amber-950">{order.id}</span> in the memo box so our system pairs your payment without staff confusion.
-              </p>
-            </div>
-          </div>
-
-          {/* Step 3: Instant Proof Verification Box */}
-          <div className="space-y-3 pt-2 border-t border-stone-200">
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-stone-900 font-display flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full bg-stone-900 text-white text-xs flex items-center justify-center">3</span>
-                <span>Anti-Scam Automated Verification</span>
-              </h3>
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            </div>
-
-            <p className="text-xs text-stone-500">
-              To thwart fake screenshot edits and reused receipts, paste your Cash App Web Receipt URL or bank Transaction Reference # below.
-            </p>
-
-            <form onSubmit={handleVerify} className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] font-semibold text-stone-700 block mb-1">
-                    Transaction Reference # / Receipt ID
-                  </label>
-                  <input
-                    type="text"
-                    value={transactionId}
-                    onChange={e => setTransactionId(e.target.value)}
-                    placeholder="e.g. TX-9482104 or Web Receipt URL"
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-semibold text-stone-700 block mb-1">
-                    Memo Included in Payment
-                  </label>
-                  <input
-                    type="text"
-                    value={memoEntered}
-                    onChange={e => setMemoEntered(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20 font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* Verification Feedback Banner */}
-              {verificationFeedback.status !== 'idle' && (
-                <div
-                  className={`p-3 rounded-xl border text-xs flex items-start gap-2.5 ${
-                    verificationFeedback.status === 'success'
-                      ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-                      : verificationFeedback.status === 'flagged'
-                      ? 'bg-amber-50 border-amber-200 text-amber-900'
-                      : 'bg-red-50 border-red-200 text-red-900'
-                  }`}
-                >
-                  {verificationFeedback.status === 'success' ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                  )}
-                  <div className="space-y-0.5">
-                    <p className="font-semibold">{verificationFeedback.message}</p>
-                    {verificationFeedback.score && (
-                      <p className="text-[11px] opacity-80">
-                        Anti-Fraud Security Score: {verificationFeedback.score}/100
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 py-2 px-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Verify Payment Proof</span>
-                </button>
-
-                {/* Quick Demo fill for convenience */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTransactionId(`TX-CASH-${Math.floor(100000 + Math.random() * 900000)}`);
-                    setMemoEntered(order.id);
-                  }}
-                  className="py-2 px-3 border border-stone-200 hover:bg-stone-100 text-stone-600 rounded-xl text-[11px] transition-colors"
-                >
-                  Fill Sample TxID
-                </button>
-              </div>
-            </form>
           </div>
 
         </div>
@@ -287,14 +223,14 @@ export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
             onClick={onClose}
             className="px-4 py-2 text-xs font-medium text-stone-600 hover:text-stone-900 transition-colors"
           >
-            Close Window
+            Close
           </button>
 
           <button
             onClick={goToTracking}
             className="flex items-center gap-2 px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm transition-all"
           >
-            <span>View Order Status</span>
+            <span>Track Order Status</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

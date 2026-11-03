@@ -347,17 +347,17 @@ app.patch('/api/orders/:id/status', (req: Request, res: Response) => {
     ...(riderNotes !== undefined && { riderNotes }),
     ...(riderName !== undefined && { riderName }),
     ...(riderPhone !== undefined && { riderPhone }),
-    ...(status === 'preparing_in_kitchen' && !orders[orderIndex].paymentProof?.isVerified && {
+    ...(status === 'preparing_in_kitchen' && {
       paymentProof: {
         method: orders[orderIndex].customer.preferredPayment,
-        senderTagOrName: orders[orderIndex].customer.paymentIdentifier,
-        transactionId: `VERIFIED-${Date.now().toString(36).toUpperCase()}`,
-        submittedAt: new Date().toISOString(),
+        senderTagOrName: orders[orderIndex].paymentProof?.senderTagOrName || orders[orderIndex].customer.paymentIdentifier,
+        transactionId: orders[orderIndex].paymentProof?.transactionId || `VERIFIED-${Date.now().toString(36).toUpperCase()}`,
+        submittedAt: orders[orderIndex].paymentProof?.submittedAt || new Date().toISOString(),
         verifiedAt: new Date().toISOString(),
         isVerified: true,
         memoMatched: true,
         duplicateDetected: false,
-        verificationNotes: 'Verified and authorized by kitchen staff.',
+        verificationNotes: 'Verified and authorized by kitchen staff (Chef Lulu).',
       },
     }),
   };
@@ -381,17 +381,16 @@ app.post('/api/orders/:id/proof', (req: Request, res: Response) => {
 
   const updatedOrder: Order = {
     ...orders[orderIndex],
-    status: 'payment_verified',
+    status: 'pending_payment',
     paymentProof: {
       method: orders[orderIndex].customer.preferredPayment,
       senderTagOrName: proof.senderHandle || orders[orderIndex].customer.paymentIdentifier,
-      transactionId: proof.transactionId,
+      transactionId: proof.transactionId || 'Awaiting Confirmation',
       submittedAt: new Date().toISOString(),
-      verifiedAt: new Date().toISOString(),
-      isVerified: true,
-      memoMatched: true,
+      isVerified: false,
+      memoMatched: false,
       duplicateDetected: false,
-      verificationNotes: `Payment proof submitted: ${proof.transactionId}`,
+      verificationNotes: `Payment transfer notification submitted by customer. Awaiting Chef Lulu verification.`,
     },
   };
 
@@ -399,6 +398,24 @@ app.post('/api/orders/:id/proof', (req: Request, res: Response) => {
   broadcast({ type: 'order_updated', order: updatedOrder });
 
   res.json({ success: true, order: updatedOrder });
+});
+
+// App Settings (Checkout Mode: 'hybrid' | 'whatsapp_only')
+let appSettings = {
+  checkoutMode: 'hybrid' as 'hybrid' | 'whatsapp_only',
+};
+
+app.get('/api/settings', (_req: Request, res: Response) => {
+  res.json(appSettings);
+});
+
+app.post('/api/settings', (req: Request, res: Response) => {
+  const { checkoutMode } = req.body;
+  if (checkoutMode === 'hybrid' || checkoutMode === 'whatsapp_only') {
+    appSettings.checkoutMode = checkoutMode;
+    broadcast({ type: 'settings_updated', settings: appSettings });
+  }
+  res.json({ success: true, settings: appSettings });
 });
 
 // 4. Staff Authentication & Logs

@@ -19,6 +19,7 @@ export const CartDrawer: React.FC = () => {
     createOrder,
     setIsChatOpen,
     openLegalModal,
+    checkoutMode,
   } = useOrder();
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});

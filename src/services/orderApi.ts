@@ -1,5 +1,9 @@
 import { Order, OrderStatus } from '../types';
 
+export interface AppSettings {
+  checkoutMode: 'hybrid' | 'whatsapp_only';
+}
+
 const isBrowser = typeof window !== 'undefined';
 const isLocalhost = isBrowser && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 const rawApi = ((import.meta as any).env?.VITE_API_URL as string | undefined)?.trim()?.replace(/\/+$/, '');
@@ -80,15 +84,15 @@ export async function updateRemoteOrderStatus(
 }
 
 /**
- * Submit payment verification proof to shared server
+ * Submit payment notification/proof to shared server (never auto-approves)
  */
 export async function submitRemotePaymentProof(
   orderId: string,
   proof: {
-    transactionId: string;
-    memoEntered: string;
-    amountPaid: number;
-    senderHandle: string;
+    transactionId?: string;
+    memoEntered?: string;
+    amountPaid?: number;
+    senderHandle?: string;
     rawText?: string;
   }
 ): Promise<Order | null> {
@@ -109,11 +113,46 @@ export async function submitRemotePaymentProof(
 }
 
 /**
+ * Fetch shared app settings (e.g. checkoutMode)
+ */
+export async function fetchRemoteSettings(): Promise<AppSettings | null> {
+  if (!API_BASE) return null;
+  try {
+    const res = await fetch(`${API_BASE}/settings`, { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Update app settings from Admin Terminal
+ */
+export async function updateRemoteSettings(settings: Partial<AppSettings>): Promise<AppSettings | null> {
+  if (!API_BASE) return null;
+  try {
+    const res = await fetch(`${API_BASE}/settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings),
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.settings || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Subscribe to real-time Server-Sent Events (SSE) from the sync engine
  */
 export function subscribeToSyncStream(callbacks: {
   onOrderCreated?: (order: Order) => void;
   onOrderUpdated?: (order: Order) => void;
+  onSettingsUpdated?: (settings: AppSettings) => void;
   onStatusChange?: (connected: boolean) => void;
 }): () => void {
   if (!API_BASE) {
@@ -140,6 +179,8 @@ export function subscribeToSyncStream(callbacks: {
             callbacks.onOrderCreated?.(payload.order);
           } else if (payload.type === 'order_updated' && payload.order) {
             callbacks.onOrderUpdated?.(payload.order);
+          } else if (payload.type === 'settings_updated' && payload.settings) {
+            callbacks.onSettingsUpdated?.(payload.settings);
           }
         } catch {
           // ignore malformed frame

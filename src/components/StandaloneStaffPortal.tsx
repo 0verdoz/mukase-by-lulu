@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
-  const { orders, updateOrderStatus, submitPaymentProof } = useOrder();
+  const { orders, updateOrderStatus, submitPaymentProof, checkoutMode, setCheckoutMode } = useOrder();
   const [filterStatus, setFilterStatus] = useState<'all' | OrderStatus>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(orders[0] || null);
   const [activeTab, setActiveTab] = useState<'orders' | 'logs' | 'settings'>('orders');

@@ -92,3 +92,4 @@ export const SteamPotIcon: React.FC<SteamPotIconProps> = ({ className = '', size
     </div>
   );
 };
+
