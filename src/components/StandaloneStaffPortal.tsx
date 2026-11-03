@@ -621,6 +621,68 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
               </button>
             </form>
 
+            {/* Storefront Checkout & Anti-Scam Mode Switcher */}
+            <div className="pt-6 border-t border-stone-800 space-y-4">
+              <div>
+                <h4 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-amber-500" />
+                  <span>Storefront Checkout &amp; Anti-Scam Mode</span>
+                </h4>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  Choose how customer orders are received on the storefront. You can toggle between both modes to test:
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {/* Option 1: Hybrid Mode */}
+                <button
+                  type="button"
+                  onClick={() => setCheckoutMode('hybrid')}
+                  className={`w-full p-4 rounded-xl border text-left transition-all ${
+                    checkoutMode === 'hybrid'
+                      ? 'bg-amber-950/40 border-amber-500 text-white shadow-md'
+                      : 'bg-stone-950/60 border-stone-800 text-stone-400 hover:border-stone-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold text-amber-400">
+                      Mode 1: Hybrid (WhatsApp Primary + Web Order with Kitchen Approval)
+                    </span>
+                    {checkoutMode === 'hybrid' && (
+                      <span className="text-[10px] uppercase font-bold bg-amber-500 text-stone-950 px-2 py-0.5 rounded">Active</span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-stone-300 leading-relaxed">
+                    Customer can order via WhatsApp OR submit order on the web. Web orders stay <strong>&quot;Awaiting Confirmation&quot;</strong> until you verify the money in CashApp/Zelle and click &quot;Confirm Payment &amp; Start Cooking&quot;.
+                  </p>
+                </button>
+
+                {/* Option 2: Mandatory WhatsApp / Phone Only */}
+                <button
+                  type="button"
+                  onClick={() => setCheckoutMode('whatsapp_only')}
+                  className={`w-full p-4 rounded-xl border text-left transition-all ${
+                    checkoutMode === 'whatsapp_only'
+                      ? 'bg-emerald-950/40 border-emerald-500 text-white shadow-md'
+                      : 'bg-stone-950/60 border-stone-800 text-stone-400 hover:border-stone-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold text-emerald-400">
+                      Mode 2: Mandatory WhatsApp &amp; Phone Only (Strict Scam-Proof)
+                    </span>
+                    {checkoutMode === 'whatsapp_only' && (
+                      <span className="text-[10px] uppercase font-bold bg-emerald-500 text-stone-950 px-2 py-0.5 rounded">Active</span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-stone-300 leading-relaxed">
+                    Direct web ordering is disabled. Customers <strong>MUST message Chef Lulu on WhatsApp or call</strong> to order. No unverified web orders can be submitted.
+                  </p>
+                </button>
+              </div>
+            </div>
+
+
             <div className="pt-4 border-t border-stone-800 text-xs text-stone-400 space-y-2">
               <h4 className="font-bold text-white uppercase text-[11px]">How To Access Standalone Terminal</h4>
               <p>Bookmark this private URL on your phone or kitchen display:</p>
