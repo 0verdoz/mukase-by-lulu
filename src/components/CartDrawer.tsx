@@ -377,14 +377,14 @@ export const CartDrawer: React.FC = () => {
                 <span>Food Subtotal</span>
                 <span className="font-semibold tabular-nums text-stone-900">${cartTotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span>Direct Courier Delivery</span>
                 <span className="font-semibold tabular-nums text-stone-900">${deliveryFee.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Packaging & Local Tax (8%)</span>
                 <span className="font-semibold tabular-nums text-stone-900">${tax.toFixed(2)}</span>
-              </div>
+              </div> */}
               <div className="flex justify-between text-sm font-bold text-stone-900 pt-1.5 border-t border-stone-200">
                 <span>Total Due</span>
                 <span className="text-base text-amber-800 tabular-nums">${finalTotal.toFixed(2)}</span>

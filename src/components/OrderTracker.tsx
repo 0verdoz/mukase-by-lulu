@@ -359,14 +359,14 @@ export const OrderTracker: React.FC = () => {
                     <span>Subtotal</span>
                     <span className="font-semibold tabular-nums text-stone-900">${currentOrder.subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span>Delivery</span>
                     <span className="font-semibold tabular-nums text-stone-900">${currentOrder.deliveryFee.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Packaging & Tax</span>
                     <span className="font-semibold tabular-nums text-stone-900">${currentOrder.tax.toFixed(2)}</span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between font-bold text-sm text-stone-900 pt-2 border-t border-stone-100">
                     <span>Total Paid</span>
                     <span className="text-amber-800 tabular-nums">${currentOrder.total.toFixed(2)}</span>
