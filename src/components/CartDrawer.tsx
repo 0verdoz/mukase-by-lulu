@@ -27,9 +27,9 @@ export const CartDrawer: React.FC = () => {
 
   if (!isCartOpen) return null;
 
-  const deliveryFee = cart.length > 0 ? 4.99 : 0;
-  const tax = cart.length > 0 ? +(cartTotal * 0.08).toFixed(2) : 0;
-  const finalTotal = cart.length > 0 ? +(cartTotal + deliveryFee + tax).toFixed(2) : 0;
+  // const deliveryFee = cart.length > 0 ? 4.99 : 0;
+  // const tax = cart.length > 0 ? +(cartTotal * 0.08).toFixed(2) : 0;
+  const finalTotal = cart.length > 0 ? +(cartTotal).toFixed(2) : 0;
 
   const validateCustomer = (): boolean => {
     const errors: Record<string, string> = {};

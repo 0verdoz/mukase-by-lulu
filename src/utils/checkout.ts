@@ -71,8 +71,7 @@ ${customer.deliveryNotes ? `• Instructions: ${customer.deliveryNotes}\n` : ''}
 ${itemDetails}
 *FINANCIAL BREAKDOWN:*
 • Food Subtotal: $${subtotal.toFixed(2)}
-• Delivery Fee: $${deliveryFee.toFixed(2)}
-• Tax & Fees: $${tax.toFixed(2)}
+• *Tip: Optional(2)}*
 • *TOTAL DUE: $${total.toFixed(2)}*
 ------------------------------------------
 *PAYMENT INSTRUCTIONS:*
