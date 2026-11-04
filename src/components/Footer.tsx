@@ -3,7 +3,7 @@ import { useOrder } from '../context/OrderContext';
 import { LULU_PHONE_DISPLAY, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
 
 export const Footer: React.FC = () => {
-  const { setCurrentView, openLegalModal } = useOrder();
+  const { setCurrentView, openLegalModal, checkoutMode } = useOrder();
 
   return (
     <footer className="bg-stone-900 text-stone-300 py-12 border-t border-stone-800">
@@ -43,7 +43,11 @@ export const Footer: React.FC = () => {
               We do not use confusing unverified threads. Orders receive an automated unique memo ID. Transactions are matched against our duplicate-check registry.
             </p>
             <div className="text-stone-400 space-y-0.5">
-              <p>Cash App: <strong className="text-white">{LULU_CASHAPP_TAG}</strong></p>
+              {checkoutMode === 'whatsapp_only' ? (
+                <p>Cash App: <span className="text-emerald-400 font-semibold">Shared privately in WhatsApp upon review</span></p>
+              ) : (
+                <p>Cash App: <strong className="text-white">{LULU_CASHAPP_TAG}</strong></p>
+              )}
               <p>WhatsApp / Orders: <strong className="text-white">{LULU_PHONE_DISPLAY}</strong></p>
             </div>
           </div>

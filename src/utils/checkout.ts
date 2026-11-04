@@ -18,7 +18,7 @@ export function generateOrderCode(): string {
 /**
  * Format the full order message for WhatsApp, iMessage, and SMS
  */
-export function formatOrderMessage(order: Order): string {
+export function formatOrderMessage(order: Order, checkoutMode: 'hybrid' | 'whatsapp_only' = 'hybrid'): string {
   const { id, customer, items, subtotal, deliveryFee, tax, total } = order;
 
   let itemDetails = '';
@@ -34,7 +34,7 @@ export function formatOrderMessage(order: Order): string {
         itemDetails += `   • Side/Swallow: ${item.customization.selectedSideOrSwallow}\n`;
       }
       if (item.customization.protein) {
-        itemDetails += `   • Protein: ${item.customization.protein} ${item.customization.proteinExtraPrice > 0 ? `(+$${item.customization.proteinExtraPrice.toFixed(2)})` : ''}\n`;
+        itemDetails += `   • Protein: ${item.customization.protein} ${item.customization.proteinExtraPrice > 0 ? `(+$$${item.customization.proteinExtraPrice.toFixed(2)})` : ''}\n`;
       }
       itemDetails += `   • Spice: ${item.customization.spiceLevel}\n`;
       if (item.customization.selectedAddOns.length > 0) {
@@ -52,6 +52,29 @@ export function formatOrderMessage(order: Order): string {
       }
     }
   });
+
+  if (checkoutMode === 'whatsapp_only') {
+    return `🍲 *MUKASE BY LULU — ORDER INQUIRY (MODE 2)*
+Order Code: *${id}*
+Date: ${new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+------------------------------------------
+👤 *CUSTOMER DETAILS:*
+• Name: ${customer.name}
+• Phone: ${customer.phone}
+• Delivery Address: ${customer.address}${customer.apartmentSuite ? `, Apt/Ste ${customer.apartmentSuite}` : ''}, ${customer.city}
+${customer.deliveryNotes ? `• Instructions: ${customer.deliveryNotes}\n` : ''}
+*FOOD ITEMS:*
+${itemDetails}
+*FINANCIAL BREAKDOWN:*
+• Food Subtotal: $${subtotal.toFixed(2)}
+• *TOTAL DUE: $${total.toFixed(2)}*
+------------------------------------------
+🔒 *STRICT ANTI-SCAM PROTOCOL (MODE 2):*
+Preferred Payment: ${customer.preferredPayment === 'cashapp' ? 'Cash App' : customer.preferredPayment === 'zelle' ? 'Zelle' : 'Apple Cash'}
+Customer Handle/Phone: ${customer.paymentIdentifier || customer.phone}
+
+*Hello Chef Lulu!* Please review my order details above. Once kitchen availability is confirmed, please reply here with your official payment handle so I can complete payment with reference memo "*${id}*".`;
+  }
 
   const paymentMethodLabel = 
     customer.preferredPayment === 'cashapp' ? `Cash App (${LULU_CASHAPP_TAG})` :
@@ -71,7 +94,6 @@ ${customer.deliveryNotes ? `• Instructions: ${customer.deliveryNotes}\n` : ''}
 ${itemDetails}
 *FINANCIAL BREAKDOWN:*
 • Food Subtotal: $${subtotal.toFixed(2)}
-• *Tip: Optional(2)}*
 • *TOTAL DUE: $${total.toFixed(2)}*
 ------------------------------------------
 *PAYMENT INSTRUCTIONS:*
@@ -85,8 +107,8 @@ Please include your exact Order Code *${id}* in your payment memo/note so Chef L
 /**
  * Generate WhatsApp Direct Link
  */
-export function getWhatsAppUrl(order: Order): string {
-  const message = formatOrderMessage(order);
+export function getWhatsAppUrl(order: Order, checkoutMode: 'hybrid' | 'whatsapp_only' = 'hybrid'): string {
+  const message = formatOrderMessage(order, checkoutMode);
   return `https://wa.me/${LULU_PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
@@ -94,8 +116,8 @@ export function getWhatsAppUrl(order: Order): string {
  * Generate iMessage / SMS Link with encoded body
  * iOS uses &body=, Android often uses ?body=
  */
-export function getSmsUrl(order: Order, isAppleDevice: boolean = false): string {
-  const message = formatOrderMessage(order);
+export function getSmsUrl(order: Order, isAppleDevice: boolean = false, checkoutMode: 'hybrid' | 'whatsapp_only' = 'hybrid'): string {
+  const message = formatOrderMessage(order, checkoutMode);
   const separator = isAppleDevice ? '&' : '?';
   return `sms:${LULU_PHONE_NUMBER}${separator}body=${encodeURIComponent(message)}`;
 }

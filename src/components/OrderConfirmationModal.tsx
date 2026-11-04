@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
-  const { submitPaymentProof, setCurrentView, setTrackingOrderId } = useOrder();
+  const { submitPaymentProof, setCurrentView, setTrackingOrderId, checkoutMode } = useOrder();
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedTag, setCopiedTag] = useState(false);
   const [copiedZelle, setCopiedZelle] = useState(false);
@@ -92,63 +92,88 @@ export const OrderConfirmationModal: React.FC<Props> = ({ order, onClose }) => {
         {/* Scrollable Content */}
         <div className="p-5 sm:p-6 space-y-6 overflow-y-auto flex-1 text-sm text-stone-700">
           
-          {/* Step 1: Send Payment */}
-          <div className="p-4 bg-amber-50/70 rounded-2xl border border-amber-200/80 space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-stone-900 font-display flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center">1</span>
-                <span>Send Payment to Chef Lulu</span>
-              </h3>
-              <span className="text-base font-bold text-amber-900 font-mono">${order.total.toFixed(2)}</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-              {/* CashApp Card */}
-              <div className="p-3 bg-white rounded-xl border border-amber-200 flex items-center justify-between shadow-sm">
+          {/* Step 1: Send Payment / WhatsApp Order Review */}
+          {checkoutMode === 'whatsapp_only' ? (
+            <div className="p-4 bg-emerald-50/90 rounded-2xl border border-emerald-300 space-y-3">
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck className="w-5 h-5 text-emerald-700 shrink-0" />
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-stone-400 block">Cash App</span>
-                  <span className="text-sm font-bold font-mono text-emerald-700">{LULU_CASHAPP_TAG}</span>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-950">
+                    Payment Handle Protected (Anti-Scam Mode 2)
+                  </h4>
+                  <p className="text-xs text-emerald-800 mt-0.5 leading-relaxed">
+                    To eliminate payment spam and fake receipts, Chef Lulu&apos;s $Cashtag is <strong>never published on the web</strong>. Kitchen staff will review your order items and share the verified handle inside your private WhatsApp chat.
+                  </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleCopyTag}
-                  className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
-                >
-                  {copiedTag ? 'Copied!' : 'Copy'}
-                </button>
               </div>
-
-              {/* Zelle Card */}
-              <div className="p-3 bg-white rounded-xl border border-amber-200 flex items-center justify-between shadow-sm">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-stone-400 block">Zelle Phone</span>
-                  <span className="text-xs font-bold font-mono text-stone-800">{LULU_ZELLE_CONTACT}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleCopyZelle}
-                  className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
-                >
-                  {copiedZelle ? 'Copied!' : 'Copy'}
-                </button>
-              </div>
-            </div>
-
-            {/* Memo Note */}
-            <div className="bg-amber-100/60 p-2.5 rounded-xl border border-amber-300/80 text-xs text-amber-950 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">⚠️ Put Memo in Transfer:</span>
-                <span className="font-mono font-bold bg-amber-200/80 px-2 py-0.5 rounded text-amber-900">{order.id}</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleCopyCode}
-                className="text-xs font-semibold text-amber-800 hover:underline"
+              <a
+                href={getWhatsAppUrl(order, 'whatsapp_only')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-emerald-600/20 transition-all"
               >
-                {copiedCode ? 'Copied!' : 'Copy Memo'}
-              </button>
+                <MessageSquare className="w-4 h-4" />
+                <span>Open WhatsApp to Confirm Order &amp; Receive $Cashtag</span>
+              </a>
             </div>
-          </div>
+          ) : (
+            <div className="p-4 bg-amber-50/70 rounded-2xl border border-amber-200/80 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-stone-900 font-display flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-amber-600 text-white text-xs flex items-center justify-center">1</span>
+                  <span>Send Payment to Chef Lulu</span>
+                </h3>
+                <span className="text-base font-bold text-amber-900 font-mono">${order.total.toFixed(2)}</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                {/* CashApp Card */}
+                <div className="p-3 bg-white rounded-xl border border-amber-200 flex items-center justify-between shadow-sm">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-stone-400 block">Cash App</span>
+                    <span className="text-sm font-bold font-mono text-emerald-700">{LULU_CASHAPP_TAG}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCopyTag}
+                    className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+                  >
+                    {copiedTag ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+
+                {/* Zelle Card */}
+                <div className="p-3 bg-white rounded-xl border border-amber-200 flex items-center justify-between shadow-sm">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-stone-400 block">Zelle Phone</span>
+                    <span className="text-xs font-bold font-mono text-stone-800">{LULU_ZELLE_CONTACT}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCopyZelle}
+                    className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 transition-colors"
+                  >
+                    {copiedZelle ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Memo Note */}
+              <div className="bg-amber-100/60 p-2.5 rounded-xl border border-amber-300/80 text-xs text-amber-950 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">⚠️ Put Memo in Transfer:</span>
+                  <span className="font-mono font-bold bg-amber-200/80 px-2 py-0.5 rounded text-amber-900">{order.id}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyCode}
+                  className="text-xs font-semibold text-amber-800 hover:underline"
+                >
+                  {copiedCode ? 'Copied!' : 'Copy Memo'}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Step 2: Confirm / Notify Kitchen */}
           <div className="space-y-3">

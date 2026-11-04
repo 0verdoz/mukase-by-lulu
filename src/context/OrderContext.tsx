@@ -80,7 +80,7 @@ const DEFAULT_CUSTOMER: CustomerDetails = {
   phone: '',
   address: '',
   apartmentSuite: '',
-  city: 'Atlanta',
+  city: 'Augusta',
   postalCode: '30309',
   deliveryNotes: '',
   preferredPayment: 'cashapp',
@@ -283,6 +283,11 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setCheckoutModeState(mode);
     try {
       localStorage.setItem('mukase_checkout_mode', mode);
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const bc = new BroadcastChannel('mukase_sync_channel');
+        bc.postMessage({ type: 'CHECKOUT_MODE_CHANGED', mode });
+        bc.close();
+      }
     } catch {}
     updateRemoteSettings({ checkoutMode: mode }).catch(() => {});
   };
@@ -352,6 +357,54 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     });
 
+    // Listen to cross-tab BroadcastChannel for instantaneous mode switching
+    let bc: BroadcastChannel | null = null;
+    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+      try {
+        bc = new BroadcastChannel('mukase_sync_channel');
+        bc.onmessage = (event) => {
+          if (!isMounted) return;
+          if (event.data?.type === 'CHECKOUT_MODE_CHANGED' && event.data.mode) {
+            setCheckoutModeState(event.data.mode);
+          }
+        };
+      } catch {}
+    }
+
+    // High-frequency polling fallback (every 2.5s) to guarantee tabs reflect remote changes
+    const pollInterval = setInterval(() => {
+      if (!isMounted) return;
+      fetchRemoteSettings().then(s => {
+        if (isMounted && s?.checkoutMode) {
+          setCheckoutModeState(s.checkoutMode);
+        }
+      }).catch(() => {});
+    }, 2500);
+
+    // Immediate sync on tab focus or visibility return
+    const handleSyncOnActive = () => {
+      fetchRemoteSettings().then(s => {
+        if (isMounted && s?.checkoutMode) {
+          setCheckoutModeState(s.checkoutMode);
+        }
+      }).catch(() => {});
+      fetchRemoteOrders().then(remoteOrders => {
+        if (isMounted && remoteOrders && remoteOrders.length > 0) {
+          setOrders(prev => {
+            const remoteIds = new Set(remoteOrders.map(r => r.id));
+            const uniqueLocals = prev.filter(l => !remoteIds.has(l.id));
+            return [...remoteOrders, ...uniqueLocals];
+          });
+        }
+      }).catch(() => {});
+    };
+
+    window.addEventListener('focus', handleSyncOnActive);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') handleSyncOnActive();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     // Subscribe to SSE stream for live updates (order_created, order_updated)
     const unsubscribe = subscribeToSyncStream({
       onOrderCreated: (newOrder) => {
@@ -377,6 +430,10 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => {
       isMounted = false;
       unsubscribe();
+      clearInterval(pollInterval);
+      if (bc) bc.close();
+      window.removeEventListener('focus', handleSyncOnActive);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 
@@ -593,8 +650,13 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           quickReplies = ['MUK-4821', 'MUK-6190'];
         }
       } else if (lower.includes('payment') || lower.includes('scam') || lower.includes('cashapp') || lower.includes('zelle') || lower.includes('memo')) {
-        botResponse = `To prevent scams and duplicate receipt fraud, Mukase by Lulu requires your unique Order Code (e.g. "MUK-8492") in your CashApp (${LULU_CASHAPP_TAG}) or Zelle memo field. Our verification system automatically audits the transaction reference number and prevents recycled receipts!`;
-        quickReplies = ['Submit Payment Proof', 'View CashApp Tag', 'Order Now'];
+        if (checkoutMode === 'whatsapp_only') {
+          botResponse = `To ensure 100% scam-proof protection against fraudulent requests and spam, payment handles are strictly sent privately in WhatsApp after our kitchen staff reviews your order details. No cashtags are displayed publicly.`;
+          quickReplies = ['Order via WhatsApp', 'Kitchen Phone Line', 'Menu Options'];
+        } else {
+          botResponse = `To prevent scams and duplicate receipt fraud, Mukase by Lulu requires your unique Order Code (e.g. "MUK-8492") in your CashApp (${LULU_CASHAPP_TAG}) or Zelle memo field. Our verification system automatically audits the transaction reference number and prevents recycled receipts!`;
+          quickReplies = ['Submit Payment Proof', 'View CashApp Tag', 'Order Now'];
+        }
       } else if (lower.includes('allergy') || lower.includes('peanut') || lower.includes('suya') || lower.includes('vegan')) {
         botResponse = `Nut Allergy Warning: Beef Suya skewers contain traditional Yaji spice made with roasted peanuts (Kuli-Kuli). For nut-free options, enjoy our Smoky Party Jollof, Special Waakye Bowl, and Kelewele without peanut garnish!`;
         quickReplies = ['View Menu', 'Customize Waakye', 'Track Order'];

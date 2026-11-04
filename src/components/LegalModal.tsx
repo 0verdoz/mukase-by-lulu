@@ -127,7 +127,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                   Mukase by Lulu operates a conversational checkout model. We <strong>never</strong> ask for, view, collect, or store your bank passwords, debit/credit card CVV numbers, PINs, or sensitive banking credentials.
                 </p>
                 <p className="text-stone-400">
-                  All transactions take place directly on trusted third-party applications (Cash App or Zelle) initiated by you, directed solely to Lulu’s verified business handles (Cash App: <strong className="text-white">{LULU_CASHAPP_TAG}</strong> or Zelle: <strong className="text-white">{LULU_ZELLE_CONTACT}</strong>).
+                  All transactions take place directly on trusted third-party applications (Cash App or Zelle) initiated by you, directed solely to Lulu’s verified business handles (provided privately in WhatsApp upon order review or invoice confirmation).
                 </p>
               </section>
 
@@ -197,7 +197,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                   3. Payment Verification & Fraud Prevention Policy
                 </h3>
                 <p>
-                  To protect our independent kitchen from payment scams, <strong>food preparation begins only after receipt and verification of full payment</strong> via Cash App (<code className="text-amber-400">{LULU_CASHAPP_TAG}</code>) or Zelle (<code className="text-amber-400">{LULU_ZELLE_CONTACT}</code>).
+                  To protect our independent kitchen from payment scams, <strong>food preparation begins only after receipt and verification of full payment</strong> via our official verified Cash App or Zelle handles (shared directly upon order review or invoice confirmation).
                 </p>
                 <ul className="list-disc pl-5 space-y-1 text-stone-400">
                   <li><strong>Mandatory Memo:</strong> You must enter your unique Order Code (e.g. <code>MUK-XXXX</code>) in your payment transfer note.</li>

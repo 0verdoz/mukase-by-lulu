@@ -634,49 +634,73 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
               </div>
 
               <div className="space-y-3">
-                {/* Option 1: Hybrid Mode */}
-                <button
-                  type="button"
-                  onClick={() => setCheckoutMode('hybrid')}
-                  className={`w-full p-4 rounded-xl border text-left transition-all ${
-                    checkoutMode === 'hybrid'
-                      ? 'bg-amber-950/40 border-amber-500 text-white shadow-md'
-                      : 'bg-stone-950/60 border-stone-800 text-stone-400 hover:border-stone-700'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-amber-400">
-                      Mode 1: Hybrid (WhatsApp Primary + Web Order with Kitchen Approval)
-                    </span>
-                    {checkoutMode === 'hybrid' && (
-                      <span className="text-[10px] uppercase font-bold bg-amber-500 text-stone-950 px-2 py-0.5 rounded">Active</span>
-                    )}
+                {/* Option 1: Hybrid Mode (Visibly Blurred & Disabled when Mode 2 is Active) */}
+                {checkoutMode === 'whatsapp_only' ? (
+                  <div className="relative rounded-xl overflow-hidden border border-stone-800/80">
+                    <div className="filter blur-[1.5px] opacity-40 pointer-events-none p-4 bg-stone-950/60 select-none">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-bold text-amber-400">
+                          Mode 1: Hybrid (WhatsApp Primary + Web Order with Kitchen Approval)
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-400 leading-relaxed">
+                        Customer can order via WhatsApp OR submit order on the web. Web orders stay <strong>&quot;Awaiting Confirmation&quot;</strong> until you verify the money in CashApp/Zelle and click &quot;Confirm Payment &amp; Start Cooking&quot;.
+                      </p>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-between px-4 bg-stone-950/80 backdrop-blur-[0.5px]">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase font-bold bg-stone-800 text-stone-400 border border-stone-700 px-2 py-0.5 rounded font-mono">
+                          Blurred &amp; Inactive (Mode 2 Active)
+                        </span>
+                        <span className="text-xs text-stone-400">Direct web orders paused</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setCheckoutMode('hybrid')}
+                        className="px-3 py-1 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 shadow transition-colors"
+                      >
+                        Activate Mode 1
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-[11px] text-stone-300 leading-relaxed">
-                    Customer can order via WhatsApp OR submit order on the web. Web orders stay <strong>&quot;Awaiting Confirmation&quot;</strong> until you verify the money in CashApp/Zelle and click &quot;Confirm Payment &amp; Start Cooking&quot;.
-                  </p>
-                </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setCheckoutMode('hybrid')}
+                    className="w-full p-4 rounded-xl border border-amber-500 bg-amber-950/40 text-white shadow-md text-left transition-all"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-bold text-amber-400">
+                        Mode 1: Hybrid (WhatsApp Primary + Web Order with Kitchen Approval)
+                      </span>
+                      <span className="text-[10px] uppercase font-bold bg-amber-500 text-stone-950 px-2 py-0.5 rounded font-mono">Active</span>
+                    </div>
+                    <p className="text-[11px] text-stone-300 leading-relaxed">
+                      Customer can order via WhatsApp OR submit order on the web. Web orders stay <strong>&quot;Awaiting Confirmation&quot;</strong> until you verify the money in CashApp/Zelle and click &quot;Confirm Payment &amp; Start Cooking&quot;.
+                    </p>
+                  </button>
+                )}
 
-                {/* Option 2: Mandatory WhatsApp / Phone Only */}
+                {/* Option 2: Mandatory WhatsApp / Phone Only (Strict Scam-Proof & Anti-Spam) */}
                 <button
                   type="button"
                   onClick={() => setCheckoutMode('whatsapp_only')}
                   className={`w-full p-4 rounded-xl border text-left transition-all ${
                     checkoutMode === 'whatsapp_only'
-                      ? 'bg-emerald-950/40 border-emerald-500 text-white shadow-md'
+                      ? 'bg-emerald-950/50 border-emerald-500 text-white shadow-lg ring-1 ring-emerald-500/50'
                       : 'bg-stone-950/60 border-stone-800 text-stone-400 hover:border-stone-700'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-bold text-emerald-400">
-                      Mode 2: Mandatory WhatsApp &amp; Phone Only (Strict Scam-Proof)
+                      Mode 2: Mandatory WhatsApp &amp; Phone Only (Strict Scam-Proof &amp; Anti-Spam)
                     </span>
                     {checkoutMode === 'whatsapp_only' && (
-                      <span className="text-[10px] uppercase font-bold bg-emerald-500 text-stone-950 px-2 py-0.5 rounded">Active</span>
+                      <span className="text-[10px] uppercase font-bold bg-emerald-500 text-stone-950 px-2 py-0.5 rounded font-mono">Active</span>
                     )}
                   </div>
                   <p className="text-[11px] text-stone-300 leading-relaxed">
-                    Direct web ordering is disabled. Customers <strong>MUST message Chef Lulu on WhatsApp or call</strong> to order. No unverified web orders can be submitted.
+                    Direct web ordering is disabled. $Cashtag is <strong>completely hidden from the web app</strong> to prevent spoofed payments and spam. Kitchen staff provides $Cashtag privately in WhatsApp after reviewing order details.
                   </p>
                 </button>
               </div>

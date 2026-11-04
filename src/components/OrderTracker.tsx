@@ -13,7 +13,7 @@ const STATUS_STEPS: { key: OrderStatus; label: string; desc: string }[] = [
 ];
 
 export const OrderTracker: React.FC = () => {
-  const { orders, trackingOrderId, setTrackingOrderId, submitPaymentProof, setIsChatOpen } = useOrder();
+  const { orders, trackingOrderId, setTrackingOrderId, submitPaymentProof, setIsChatOpen, checkoutMode } = useOrder();
   const [searchInput, setSearchInput] = useState(trackingOrderId || '');
   const [copiedCode, setCopiedCode] = useState(false);
 

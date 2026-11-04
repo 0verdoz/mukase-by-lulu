@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Trash2, Plus, Minus, MessageSquare, ArrowRight, ShieldCheck, Phone, MapPin, User, CreditCard } from 'lucide-react';
 import { useOrder } from '../context/OrderContext';
-import { getWhatsAppUrl, getSmsUrl, isApplePlatform, isMobileDevice, formatOrderMessage, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
+import { getWhatsAppUrl, getSmsUrl, isApplePlatform, isMobileDevice, formatOrderMessage, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT, LULU_PHONE_NUMBER } from '../utils/checkout';
 import { PaymentMethod } from '../types';
 
 export const CartDrawer: React.FC = () => {
@@ -49,17 +49,22 @@ export const CartDrawer: React.FC = () => {
       return;
     }
 
+    if (channel === 'direct' && checkoutMode === 'whatsapp_only') {
+      // Direct web orders are disabled in Mode 2
+      return;
+    }
+
     const order = createOrder(channel);
 
     if (channel === 'whatsapp') {
-      const url = getWhatsAppUrl(order);
+      const url = getWhatsAppUrl(order, checkoutMode);
       window.open(url, '_blank');
     } else if (channel === 'imessage' || channel === 'sms') {
       if (isMobileDevice()) {
-        const url = getSmsUrl(order, channel === 'imessage' || isApple);
+        const url = getSmsUrl(order, channel === 'imessage' || isApple, checkoutMode);
         window.location.href = url;
       } else {
-        const message = formatOrderMessage(order);
+        const message = formatOrderMessage(order, checkoutMode);
         navigator.clipboard?.writeText(message).catch(() => {});
       }
     } else if (channel === 'concierge_chat') {
@@ -306,9 +311,21 @@ export const CartDrawer: React.FC = () => {
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { id: 'cashapp' as PaymentMethod, label: 'Cash App', sub: LULU_CASHAPP_TAG },
-                      { id: 'zelle' as PaymentMethod, label: 'Zelle', sub: 'Instant' },
-                      { id: 'apple_cash' as PaymentMethod, label: 'Apple Cash', sub: 'iMessage' },
+                      { 
+                        id: 'cashapp' as PaymentMethod, 
+                        label: 'Cash App', 
+                        sub: checkoutMode === 'whatsapp_only' ? 'Private in WhatsApp' : LULU_CASHAPP_TAG 
+                      },
+                      { 
+                        id: 'zelle' as PaymentMethod, 
+                        label: 'Zelle', 
+                        sub: checkoutMode === 'whatsapp_only' ? 'Private in WhatsApp' : 'Instant' 
+                      },
+                      { 
+                        id: 'apple_cash' as PaymentMethod, 
+                        label: 'Apple Cash', 
+                        sub: checkoutMode === 'whatsapp_only' ? 'Private in WhatsApp' : 'iMessage' 
+                      },
                     ].map(pm => {
                       const isSelected = customer.preferredPayment === pm.id;
                       return (
@@ -352,15 +369,30 @@ export const CartDrawer: React.FC = () => {
                 </div>
 
                 {/* Anti-Scam Assurance Box */}
-                <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-emerald-950">
-                  <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
-                  <div className="space-y-0.5">
-                    <p className="font-bold">Anti-Scam Memo Verification</p>
-                    <p className="text-[11px] text-emerald-800 leading-relaxed">
-                      A unique code (e.g. MUK-8492) will be generated. You must include this code in your CashApp/Zelle memo so Lulu's staff can verify your receipt instantly without confusion.
-                    </p>
+                {checkoutMode === 'whatsapp_only' ? (
+                  <div className="bg-emerald-50/90 border border-emerald-300 rounded-xl p-3.5 flex items-start gap-3 text-xs text-emerald-950">
+                    <ShieldCheck className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-bold text-emerald-900">🔒 Strict Anti-Scam Protection</span>
+                        <span className="text-[10px] bg-emerald-600 text-white font-mono px-1.5 py-0.5 rounded font-bold">MODE 2</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-800 leading-relaxed">
+                        To stop payment spam, counterfeit screenshots, and deceptive payment requests, <strong>Chef Lulu&apos;s $Cashtag is NOT published on the web</strong>. Staff will review your items and provide the official payment handle directly inside your private WhatsApp chat.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-amber-950">
+                    <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                    <div className="space-y-0.5">
+                      <p className="font-bold">Anti-Scam Memo Verification</p>
+                      <p className="text-[11px] text-amber-800 leading-relaxed">
+                        A unique code (e.g. MUK-8492) will be generated. You must include this code in your CashApp/Zelle memo so Lulu&apos;s staff can verify your receipt instantly without confusion.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
               </div>
             </>
@@ -392,43 +424,103 @@ export const CartDrawer: React.FC = () => {
             </div>
 
             {/* Direct In-App Checkout & Alternative Dispatch Buttons */}
-            <div className="space-y-2 pt-1">
+            <div className="space-y-3 pt-1">
               
-              {/* Primary Direct Order Button (No App / Phone Link Required) */}
-              <button
-                type="button"
-                onClick={() => handleCheckout('direct')}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-amber-600/20 transition-all"
-              >
-                <span>Confirm & Place Order Directly</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {checkoutMode === 'whatsapp_only' ? (
+                /* MODE 2: MANDATORY WHATSAPP & PHONE ONLY */
+                <div className="space-y-2.5">
+                  {/* Primary WhatsApp Action */}
+                  <button
+                    type="button"
+                    onClick={() => handleCheckout('whatsapp')}
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-emerald-600/25 transition-all"
+                  >
+                    <MessageSquare className="w-4 h-4 text-white" />
+                    <span>Order via WhatsApp (Staff Reviews &amp; Sends $Cashtag)</span>
+                  </button>
 
-              <div className="relative flex py-0.5 items-center">
-                <div className="flex-grow border-t border-stone-200"></div>
-                <span className="flex-shrink mx-2 text-[10px] uppercase font-bold text-stone-400">or send via message</span>
-                <div className="flex-grow border-t border-stone-200"></div>
-              </div>
+                  {/* Alternative phone links */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <a
+                      href={`tel:${LULU_PHONE_NUMBER}`}
+                      className="flex items-center justify-center gap-1.5 py-2 px-3 bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+                    >
+                      <Phone className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Call Kitchen Line</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => handleCheckout(isApple ? 'imessage' : 'sms')}
+                      className="flex items-center justify-center gap-1.5 py-2 px-3 bg-stone-800 hover:bg-stone-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+                    >
+                      <span>{isApple ? 'iMessage Lulu' : 'SMS Lulu'}</span>
+                    </button>
+                  </div>
 
-              {/* Messaging Options */}
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleCheckout('whatsapp')}
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>WhatsApp</span>
-                </button>
+                  {/* BLURRED & DISABLED MODE 1 WEB CHECKOUT */}
+                  <div className="relative rounded-xl overflow-hidden border border-stone-200 mt-2">
+                    <div className="filter blur-[1.5px] opacity-40 pointer-events-none select-none p-2 bg-stone-100">
+                      <button
+                        type="button"
+                        disabled
+                        className="w-full flex items-center justify-center gap-2 py-2 px-4 bg-amber-600 text-white text-xs font-bold rounded-xl"
+                      >
+                        <span>Mode 1: Confirm &amp; Place Order Directly (Web Checkout)</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-stone-900/70 backdrop-blur-[0.5px] text-white p-2 text-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-stone-950 px-2 py-0.5 rounded font-mono">
+                          Mode 1 Disabled
+                        </span>
+                        <span className="text-xs text-stone-200 font-medium">
+                          Web orders paused. Please order via WhatsApp above.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* MODE 1: HYBRID MODE */
+                <div className="space-y-2">
+                  {/* Primary Direct Order Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleCheckout('direct')}
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-amber-600 hover:bg-amber-700 active:scale-[0.98] text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-amber-600/20 transition-all"
+                  >
+                    <span>Confirm &amp; Place Order Directly</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => handleCheckout(isApple ? 'imessage' : 'sms')}
-                  className="flex items-center justify-center gap-1.5 py-2 px-3 bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
-                >
-                  <span>{isApple ? 'iMessage' : 'SMS'}</span>
-                </button>
-              </div>
+                  <div className="relative flex py-0.5 items-center">
+                    <div className="flex-grow border-t border-stone-200"></div>
+                    <span className="flex-shrink mx-2 text-[10px] uppercase font-bold text-stone-400">or send via message</span>
+                    <div className="flex-grow border-t border-stone-200"></div>
+                  </div>
+
+                  {/* Messaging Options */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleCheckout('whatsapp')}
+                      className="flex items-center justify-center gap-1.5 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>WhatsApp</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleCheckout(isApple ? 'imessage' : 'sms')}
+                      className="flex items-center justify-center gap-1.5 py-2 px-3 bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white text-xs font-semibold rounded-xl shadow-sm transition-all"
+                    >
+                      <span>{isApple ? 'iMessage' : 'SMS'}</span>
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* In-App Concierge Chat Alternative */}
               <button
