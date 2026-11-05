@@ -52,8 +52,8 @@ export const AdminApp: React.FC = () => {
         </div>
 
         <StaffAuthGuard onExitToStore={handleExitToStore}>
-          {(session) => (
-            <StandaloneStaffPortal session={session} onExit={() => {}} />
+          {(session, logout) => (
+            <StandaloneStaffPortal session={session} onExit={logout} />
           )}
         </StaffAuthGuard>
       </div>

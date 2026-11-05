@@ -4,7 +4,7 @@ import { authenticateStaff, getCurrentStaffSession, getLockoutRemainingSeconds, 
 import { SteamPotIcon } from './SteamPotIcon';
 
 interface Props {
-  children: (session: StaffSession) => React.ReactNode;
+  children: (session: StaffSession, logout: () => void) => React.ReactNode;
   onExitToStore: () => void;
 }
 
@@ -68,9 +68,15 @@ export const StaffAuthGuard: React.FC<Props> = ({ children, onExitToStore }) => 
     }
   };
 
+  const handleLogout = () => {
+    clearStaffSession();
+    setSession(null);
+    setPin('');
+  };
+
   // If already authenticated with valid session
   if (session) {
-    return <>{children(session)}</>;
+    return <>{children(session, handleLogout)}</>;
   }
 
   return (

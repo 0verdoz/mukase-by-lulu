@@ -149,16 +149,17 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
               {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-stone-500" />}
             </button>
 
-            {/* Lock / Log Out */}
+            {/* Explicit Log Out Button */}
             <button
               onClick={() => {
                 clearStaffSession();
                 onExit();
               }}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-red-950/80 hover:bg-red-900 text-red-200 border border-red-800/80 rounded-xl text-xs font-semibold transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white border border-red-500 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
+              title="Log Out of staff portal and return to PIN lock screen"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span>Lock Terminal</span>
+              <span>Log Out</span>
             </button>
           </div>
 
@@ -706,6 +707,30 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
               </div>
             </div>
 
+
+            {/* Staff Session & Log Out Section */}
+            <div className="pt-6 border-t border-stone-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div>
+                <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                  <LogOut className="w-4 h-4 text-red-400" />
+                  <span>Active Staff Session</span>
+                </h4>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  Logged in as <strong className="text-stone-300">{session.staffName}</strong>. End session when leaving the terminal.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  clearStaffSession();
+                  onExit();
+                }}
+                className="flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Log Out of Staff Portal</span>
+              </button>
+            </div>
 
             <div className="pt-4 border-t border-stone-800 text-xs text-stone-400 space-y-2">
               <h4 className="font-bold text-white uppercase text-[11px]">How To Access Standalone Terminal</h4>
