@@ -47,6 +47,15 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
     return o.status === filterStatus;
   });
 
+  const handleLogout = () => {
+    clearStaffSession();
+    if (onExit) {
+      onExit();
+    }
+    // Dispatch global event to ensure any listener immediately unmounts authenticated view
+    window.dispatchEvent(new Event('mukase_staff_logout'));
+  };
+
   const handleApprovePayment = (orderId: string) => {
     updateOrderStatus(orderId, 'preparing_in_kitchen');
     if (soundEnabled) {
@@ -102,29 +111,25 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
   };
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#faf8f5] text-stone-900 flex flex-col font-sans selection:bg-orange-500/20 selection:text-orange-900">
       
       {/* Standalone Terminal Header */}
-      <header className="sticky top-0 z-30 bg-stone-900 border-b border-stone-800 px-4 sm:px-6 py-3.5">
+      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-stone-200/90 px-4 sm:px-6 py-3.5 shadow-2xs">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           
           <div className="flex items-center gap-3">
             <SteamPotIcon size={34} />
-            <div className="hidden">
-              <span className="logo-placeholder" />
-              <ChefHat className="w-5 h-5" />
-            </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-base font-bold font-display text-white tracking-tight">
+                <span className="text-base font-bold font-display text-stone-900 tracking-tight">
                   Mukase Kitchen Terminal
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  STAFF ISOLATED
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  STAFF ACTIVE
                 </span>
               </div>
-              <p className="text-[11px] text-stone-400">
-                Logged in: <strong className="text-stone-300">{session.staffName}</strong> · Auth Token Valid
+              <p className="text-[11px] text-stone-500">
+                Logged in: <strong className="text-stone-700">{session.staffName}</strong> · Auth Token Valid
               </p>
             </div>
           </div>
@@ -133,30 +138,27 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
             {/* Copy Secret Staff URL */}
             <button
               onClick={handleCopyStaffUrl}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-xl text-xs font-medium border border-stone-700 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-700 rounded-xl text-xs font-medium border border-stone-200/90 transition-colors shadow-2xs"
               title="Copy Standalone Staff Link to bookmark on kitchen iPad or phone"
             >
-              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-stone-400" />}
               <span>{copiedLink ? 'Private Link Copied!' : 'Copy Staff Link'}</span>
             </button>
 
             {/* Sound Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-2 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-xl text-xs border border-stone-700 transition-colors"
+              className="p-2 bg-white hover:bg-stone-50 text-stone-700 rounded-xl text-xs border border-stone-200/90 transition-colors shadow-2xs"
               title={soundEnabled ? 'Mute Kitchen Chimes' : 'Unmute Kitchen Chimes'}
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-stone-500" />}
+              {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-600" /> : <VolumeX className="w-4 h-4 text-stone-400" />}
             </button>
 
             {/* Explicit Log Out Button */}
             <button
-              onClick={() => {
-                clearStaffSession();
-                onExit();
-              }}
+              onClick={handleLogout}
               className="flex items-center gap-1.5 px-3.5 py-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white border border-red-500 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer"
-              title="Log Out of staff portal and return to PIN lock screen"
+              title="Log Out of staff portal and return immediately to PIN lock screen"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Log Out</span>
@@ -170,24 +172,24 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
       <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
         
         {/* Navigation Tabs (Orders, Security Audit Logs, Terminal Settings) */}
-        <div className="flex items-center justify-between border-b border-stone-800 pb-2">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-stone-200 pb-3 gap-3">
+          <div className="bg-stone-200/60 p-1 rounded-2xl border border-stone-200/80 inline-flex flex-wrap gap-1">
             <button
               onClick={() => setActiveTab('orders')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'orders'
-                  ? 'bg-amber-600 text-white shadow-sm'
-                  : 'text-stone-400 hover:text-white hover:bg-stone-900'
+                  ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60'
+                  : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
               }`}
             >
-              Kitchen Dispatch & Orders ({orders.length})
+              Kitchen Dispatch &amp; Orders ({orders.length})
             </button>
             <button
               onClick={() => setActiveTab('logs')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'logs'
-                  ? 'bg-amber-600 text-white shadow-sm'
-                  : 'text-stone-400 hover:text-white hover:bg-stone-900'
+                  ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60'
+                  : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
               }`}
             >
               <History className="w-3.5 h-3.5" />
@@ -195,10 +197,10 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
             </button>
             <button
               onClick={() => setActiveTab('settings')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'settings'
-                  ? 'bg-amber-600 text-white shadow-sm'
-                  : 'text-stone-400 hover:text-white hover:bg-stone-900'
+                  ? 'bg-white text-stone-900 shadow-sm border border-stone-200/60'
+                  : 'text-stone-600 hover:text-stone-900 hover:bg-white/50'
               }`}
             >
               <Settings className="w-3.5 h-3.5" />
@@ -206,8 +208,8 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
             </button>
           </div>
 
-          <div className="text-xs text-stone-500 hidden sm:block font-mono">
-            Direct Staff Route: <span className="text-stone-400">?portal=staff</span>
+          <div className="text-xs text-stone-400 font-mono hidden md:block">
+            Direct Staff Route: <span className="text-stone-600 font-semibold">?portal=staff</span>
           </div>
         </div>
 
@@ -216,34 +218,34 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
           <div className="space-y-6">
             
             {/* KPI Metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-stone-900 p-4 rounded-2xl border border-stone-800 space-y-1">
-                <span className="text-xs text-stone-400 block font-medium">Today's Total Orders</span>
-                <span className="text-2xl font-bold font-display text-white tabular-nums">{orders.length}</span>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgb(0,0,0,0.02)] space-y-1">
+                <span className="text-xs text-stone-500 block font-medium">Today's Total Orders</span>
+                <span className="text-2xl font-bold font-display text-stone-900 tabular-nums">{orders.length}</span>
               </div>
 
-              <div className="bg-stone-900 p-4 rounded-2xl border border-stone-800 space-y-1">
-                <span className="text-xs text-stone-400 block font-medium">Revenue</span>
-                <span className="text-2xl font-bold font-display text-amber-500 tabular-nums">${totalRevenue.toFixed(2)}</span>
+              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgb(0,0,0,0.02)] space-y-1">
+                <span className="text-xs text-stone-500 block font-medium">Revenue</span>
+                <span className="text-2xl font-bold font-display text-orange-600 tabular-nums">${totalRevenue.toFixed(2)}</span>
               </div>
 
-              <div className="bg-stone-900 p-4 rounded-2xl border border-stone-800 space-y-1">
-                <span className="text-xs text-stone-400 block font-medium">Pending Memo Proof</span>
-                <span className={`text-2xl font-bold font-display tabular-nums ${pendingCount > 0 ? 'text-amber-400' : 'text-stone-300'}`}>
+              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgb(0,0,0,0.02)] space-y-1">
+                <span className="text-xs text-stone-500 block font-medium">Pending Memo Proof</span>
+                <span className={`text-2xl font-bold font-display tabular-nums ${pendingCount > 0 ? 'text-amber-600' : 'text-stone-400'}`}>
                   {pendingCount}
                 </span>
               </div>
 
-              <div className="bg-stone-900 p-4 rounded-2xl border border-stone-800 space-y-1">
-                <span className="text-xs text-stone-400 block font-medium">In Kitchen / In Transit</span>
-                <span className="text-2xl font-bold font-display text-emerald-400 tabular-nums">
+              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgb(0,0,0,0.02)] space-y-1">
+                <span className="text-xs text-stone-500 block font-medium">In Kitchen / In Transit</span>
+                <span className="text-2xl font-bold font-display text-emerald-700 tabular-nums">
                   {cookingCount} prep · {deliveryCount} rider
                 </span>
               </div>
             </div>
 
             {/* Filter Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto p-1 bg-stone-900 rounded-xl border border-stone-800">
+            <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-stone-200/60 rounded-2xl border border-stone-200/80 scrollbar-none">
               {[
                 { id: 'all', label: `All Orders (${orders.length})` },
                 { id: 'pending_payment', label: `Awaiting Verification (${pendingCount})` },
@@ -253,10 +255,10 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                 <button
                   key={tab.id}
                   onClick={() => setFilterStatus(tab.id as any)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap transition-colors ${
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl whitespace-nowrap transition-all cursor-pointer ${
                     filterStatus === tab.id
-                      ? 'bg-amber-600 text-white'
-                      : 'text-stone-400 hover:text-stone-200'
+                      ? 'bg-orange-600 text-white shadow-sm'
+                      : 'bg-white hover:bg-stone-50 text-stone-700 border border-stone-200/70'
                   }`}
                 >
                   {tab.label}
@@ -268,15 +270,15 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Left Column: Order List */}
-              <div className="lg:col-span-5 bg-stone-900 rounded-2xl border border-stone-800 overflow-hidden flex flex-col max-h-[640px]">
-                <div className="p-3.5 border-b border-stone-800 bg-stone-900/60 text-xs font-bold uppercase tracking-wider text-stone-400 flex items-center justify-between">
+              <div className="lg:col-span-5 bg-white rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgb(0,0,0,0.02)] overflow-hidden flex flex-col max-h-[660px]">
+                <div className="p-3.5 border-b border-stone-200 bg-stone-50 text-xs font-bold uppercase tracking-wider text-stone-600 flex items-center justify-between">
                   <span>Customer Message Threads</span>
-                  <span className="text-[11px] font-normal text-stone-500">Live Sync</span>
+                  <span className="text-[11px] font-normal text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">Live Sync Active</span>
                 </div>
 
-                <div className="divide-y divide-stone-800/80 overflow-y-auto flex-1">
+                <div className="divide-y divide-stone-100 overflow-y-auto flex-1">
                   {filteredOrders.length === 0 ? (
-                    <div className="p-8 text-center text-xs text-stone-500">
+                    <div className="p-8 text-center text-xs text-stone-400">
                       No orders in this status category.
                     </div>
                   ) : (
@@ -289,40 +291,40 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                           onClick={() => setSelectedOrder(order)}
                           className={`p-4 cursor-pointer transition-colors ${
                             isSelected
-                              ? 'bg-amber-950/40 border-l-4 border-amber-500'
-                              : 'hover:bg-stone-850'
+                              ? 'bg-amber-50/80 border-l-4 border-amber-600'
+                              : 'hover:bg-stone-50'
                           }`}
                         >
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <span className="font-mono font-bold text-sm text-white">{order.id}</span>
-                              <span className="text-[10px] font-semibold text-stone-400 uppercase bg-stone-800 px-1.5 py-0.5 rounded">
+                              <span className="font-mono font-bold text-sm text-stone-900">{order.id}</span>
+                              <span className="text-[10px] font-semibold text-stone-600 uppercase bg-stone-100 border border-stone-200 px-1.5 py-0.5 rounded-md">
                                 {order.channel}
                               </span>
                             </div>
-                            <span className="text-sm font-bold tabular-nums text-white">
+                            <span className="text-sm font-bold tabular-nums text-stone-900">
                               ${order.total.toFixed(2)}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between text-xs text-stone-400 mt-1">
-                            <span className="text-stone-300">{order.customer.name} ({order.customer.city})</span>
-                            <span className="text-stone-500 font-mono text-[11px]">
+                          <div className="flex items-center justify-between text-xs text-stone-500 mt-1">
+                            <span className="text-stone-700 font-medium">{order.customer.name} ({order.customer.city})</span>
+                            <span className="text-stone-400 font-mono text-[11px]">
                               {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>
 
                           <div className="mt-2 flex items-center gap-2">
                             {order.paymentProof?.isVerified ? (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-950/50 border border-emerald-800 px-2 py-0.5 rounded">
-                                <ShieldCheck className="w-3 h-3" /> Memo Matched
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg">
+                                <ShieldCheck className="w-3 h-3 text-emerald-600" /> Memo Matched
                               </span>
                             ) : isPending ? (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-400 bg-amber-950/50 border border-amber-800 px-2 py-0.5 rounded">
-                                <Clock className="w-3 h-3" /> Awaiting Proof
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg">
+                                <Clock className="w-3 h-3 text-amber-600" /> Awaiting Proof
                               </span>
                             ) : (
-                              <span className="text-[11px] font-medium text-stone-400">
+                              <span className="text-[11px] font-medium text-stone-600 bg-stone-100 px-2 py-0.5 rounded-lg">
                                 {order.status.replace(/_/g, ' ')}
                               </span>
                             )}
@@ -335,91 +337,91 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
               </div>
 
               {/* Right Column: Order Detail & Security Audit */}
-              <div className="lg:col-span-7 bg-stone-900 rounded-2xl border border-stone-800 p-6 space-y-6">
+              <div className="lg:col-span-7 bg-white rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgb(0,0,0,0.02)] p-5 sm:p-6 space-y-6">
                 {!selectedOrder ? (
-                  <div className="text-center py-16 text-stone-500 text-sm">
+                  <div className="text-center py-16 text-stone-400 text-sm">
                     Select an order from the list to review verification details.
                   </div>
                 ) : (
                   <>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-800">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-200">
                       <div>
                         <div className="flex items-center gap-3">
-                          <h2 className="text-2xl font-bold font-mono text-white">
+                          <h2 className="text-2xl font-bold font-mono text-stone-900">
                             {selectedOrder.id}
                           </h2>
-                          <span className="text-xs font-semibold px-2.5 py-1 rounded bg-stone-800 text-stone-300 uppercase">
+                          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700 uppercase border border-stone-200">
                             {selectedOrder.status.replace(/_/g, ' ')}
                           </span>
                         </div>
-                        <p className="text-xs text-stone-400 mt-1">
-                          Customer: <strong className="text-stone-200">{selectedOrder.customer.name}</strong> · Phone: {selectedOrder.customer.phone}
+                        <p className="text-xs text-stone-500 mt-1">
+                          Customer: <strong className="text-stone-800">{selectedOrder.customer.name}</strong> · Phone: {selectedOrder.customer.phone}
                         </p>
                       </div>
 
-                      <div className="text-right">
-                        <span className="text-xs text-stone-500 block">Total Due</span>
-                        <span className="text-2xl font-bold text-amber-500 tabular-nums">
+                      <div className="text-left sm:text-right">
+                        <span className="text-xs text-stone-400 block font-medium">Total Due</span>
+                        <span className="text-2xl font-bold text-orange-600 tabular-nums">
                           ${selectedOrder.total.toFixed(2)}
                         </span>
                       </div>
                     </div>
 
                     {/* Anti-Scam Inspector Box */}
-                    <div className="p-4 rounded-2xl bg-stone-950 border border-stone-800 space-y-3">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#faf8f5] border border-stone-200/90 space-y-3.5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                          <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+                          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-stone-900">
                             Anti-Fraud Payment Inspection
                           </h3>
                         </div>
-                        <span className="text-xs text-stone-400">
-                          {selectedOrder.customer.preferredPayment.toUpperCase()}: {selectedOrder.customer.paymentIdentifier}
+                        <span className="text-xs text-stone-600 font-medium">
+                          {selectedOrder.customer.preferredPayment.toUpperCase()}: <span className="font-mono text-stone-800">{selectedOrder.customer.paymentIdentifier}</span>
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2.5 text-xs">
-                        <div className="bg-stone-900 p-2.5 rounded-xl border border-stone-800">
-                          <span className="text-[10px] text-stone-500 block uppercase">Required Memo</span>
-                          <span className="font-mono font-bold text-amber-400">{selectedOrder.id}</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                        <div className="bg-white p-3 rounded-xl border border-stone-200/80 shadow-2xs">
+                          <span className="text-[10px] text-stone-400 block uppercase font-medium">Required Memo</span>
+                          <span className="font-mono font-bold text-amber-700 text-sm">{selectedOrder.id}</span>
                         </div>
 
-                        <div className="bg-stone-900 p-2.5 rounded-xl border border-stone-800">
-                          <span className="text-[10px] text-stone-500 block uppercase">Memo Status</span>
-                          <span className={`font-semibold ${selectedOrder.paymentProof?.memoMatched ? 'text-emerald-400' : 'text-amber-400'}`}>
+                        <div className="bg-white p-3 rounded-xl border border-stone-200/80 shadow-2xs">
+                          <span className="text-[10px] text-stone-400 block uppercase font-medium">Memo Status</span>
+                          <span className={`font-semibold ${selectedOrder.paymentProof?.memoMatched ? 'text-emerald-700' : 'text-amber-700'}`}>
                             {selectedOrder.paymentProof?.memoMatched ? '✅ Verified' : '⏳ Pending'}
                           </span>
                         </div>
 
-                        <div className="bg-stone-900 p-2.5 rounded-xl border border-stone-800">
-                          <span className="text-[10px] text-stone-500 block uppercase">Replay / Dup Check</span>
-                          <span className={`font-semibold ${selectedOrder.paymentProof?.duplicateDetected ? 'text-red-400 font-bold' : 'text-emerald-400'}`}>
+                        <div className="bg-white p-3 rounded-xl border border-stone-200/80 shadow-2xs">
+                          <span className="text-[10px] text-stone-400 block uppercase font-medium">Replay / Dup Check</span>
+                          <span className={`font-semibold ${selectedOrder.paymentProof?.duplicateDetected ? 'text-red-600 font-bold' : 'text-emerald-700'}`}>
                             {selectedOrder.paymentProof?.duplicateDetected ? '🚨 REUSED ID' : '🛡️ Unique Tx'}
                           </span>
                         </div>
                       </div>
 
                       {selectedOrder.paymentProof?.verificationNotes && (
-                        <div className="text-xs p-2.5 bg-stone-900 rounded-xl border border-stone-800 text-stone-300 font-mono text-[11px]">
+                        <div className="text-xs p-3 bg-white rounded-xl border border-stone-200 text-stone-700 font-mono text-[11px] shadow-2xs">
                           Audit Log: {selectedOrder.paymentProof.verificationNotes}
                         </div>
                       )}
 
                       {/* Approval Actions */}
                       {selectedOrder.status === 'pending_payment' && (
-                        <div className="pt-2 flex items-center gap-2">
+                        <div className="pt-2 flex flex-col sm:flex-row items-center gap-2">
                           <button
                             onClick={() => handleApprovePayment(selectedOrder.id)}
-                            className="flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-stone-950 font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20"
+                            className="w-full sm:flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 active:scale-95 cursor-pointer"
                           >
                             <CheckCircle2 className="w-4 h-4" />
-                            <span>Confirm Payment & Start Cooking</span>
+                            <span>Confirm Payment &amp; Start Cooking</span>
                           </button>
 
                           <button
                             onClick={() => setShowRejectModal(selectedOrder.id)}
-                            className="py-2.5 px-3 bg-red-950 hover:bg-red-900 text-red-200 border border-red-800 rounded-xl text-xs font-semibold transition-colors"
+                            className="w-full sm:w-auto py-2.5 px-4 bg-white hover:bg-red-50 text-red-600 border border-red-200 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
                           >
                             Reject Scam
                           </button>
@@ -429,17 +431,17 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
 
                     {/* Progress Progression */}
                     <div className="space-y-3">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500">
                         Kitchen Progression
                       </h4>
 
                       <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => updateOrderStatus(selectedOrder.id, 'preparing_in_kitchen')}
-                          className={`px-3 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                             selectedOrder.status === 'preparing_in_kitchen'
-                              ? 'bg-amber-600 text-white'
-                              : 'bg-stone-800 hover:bg-stone-700 text-stone-300'
+                              ? 'bg-amber-600 text-white shadow-sm'
+                              : 'bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-200/60'
                           }`}
                         >
                           <ChefHat className="w-3.5 h-3.5" />
@@ -448,10 +450,10 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
 
                         <button
                           onClick={() => updateOrderStatus(selectedOrder.id, 'out_for_delivery')}
-                          className={`px-3 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                             selectedOrder.status === 'out_for_delivery'
-                              ? 'bg-amber-600 text-white'
-                              : 'bg-stone-800 hover:bg-stone-700 text-stone-300'
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-200/60'
                           }`}
                         >
                           <Bike className="w-3.5 h-3.5" />
@@ -460,10 +462,10 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
 
                         <button
                           onClick={() => updateOrderStatus(selectedOrder.id, 'delivered')}
-                          className={`px-3 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                          className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                             selectedOrder.status === 'delivered'
-                              ? 'bg-emerald-600 text-stone-950'
-                              : 'bg-stone-800 hover:bg-stone-700 text-stone-300'
+                              ? 'bg-emerald-600 text-white shadow-sm'
+                              : 'bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-200/60'
                           }`}
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" />
@@ -473,42 +475,42 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                     </div>
 
                     {/* Items Breakdown */}
-                    <div className="space-y-2 pt-2 border-t border-stone-800">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400">
+                    <div className="space-y-2 pt-2 border-t border-stone-200">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500">
                         Ordered Dishes ({selectedOrder.items.length})
                       </h4>
 
                       <div className="space-y-2">
                         {selectedOrder.items.map((item, idx) => (
-                          <div key={idx} className="p-3 bg-stone-950 rounded-xl border border-stone-800 text-xs space-y-1">
-                            <div className="flex justify-between font-bold text-white text-sm">
+                          <div key={idx} className="p-3.5 bg-stone-50 rounded-xl border border-stone-200/80 text-xs space-y-1.5">
+                            <div className="flex justify-between font-bold text-stone-900 text-sm">
                               <span>
                                 {item.quantity}x{' '}
                                 {item.customization?.isOffMenuCustom && item.customization?.offMenuDishName
                                   ? item.customization.offMenuDishName
                                   : item.menuItem.name}
                               </span>
-                              <span className="tabular-nums text-amber-400">${item.itemTotalPrice.toFixed(2)}</span>
+                              <span className="tabular-nums text-orange-600">${item.itemTotalPrice.toFixed(2)}</span>
                             </div>
                             {item.customization && (
-                              <div className="text-stone-400 space-y-0.5">
+                              <div className="text-stone-600 space-y-0.5">
                                 {item.customization.selectedSideOrSwallow && (
-                                  <p><span className="text-stone-300 font-semibold">Side / Swallow:</span> {item.customization.selectedSideOrSwallow}</p>
+                                  <p><span className="text-stone-800 font-semibold">Side / Swallow:</span> {item.customization.selectedSideOrSwallow}</p>
                                 )}
                                 {item.customization.protein && (
-                                  <p><span className="text-stone-300">Protein:</span> {item.customization.protein}</p>
+                                  <p><span className="text-stone-800 font-medium">Protein:</span> {item.customization.protein}</p>
                                 )}
-                                <p><span className="text-stone-300">Spice Heat:</span> {item.customization.spiceLevel}</p>
+                                <p><span className="text-stone-800 font-medium">Spice Heat:</span> {item.customization.spiceLevel}</p>
                                 {item.customization.selectedAddOns.length > 0 && (
-                                  <p><span className="text-stone-300">Add-ons:</span> {item.customization.selectedAddOns.map(a => a.name).join(', ')}</p>
+                                  <p><span className="text-stone-800 font-medium">Add-ons:</span> {item.customization.selectedAddOns.map(a => a.name).join(', ')}</p>
                                 )}
                                 {item.customization.offMenuDetails && (
-                                  <p className="text-emerald-300 bg-emerald-950/40 p-1.5 rounded mt-1 border border-emerald-900/50">
+                                  <p className="text-emerald-800 bg-emerald-50 p-2 rounded-lg mt-1 border border-emerald-200">
                                     <strong>Off-Menu Request:</strong> "{item.customization.offMenuDetails}"
                                   </p>
                                 )}
                                 {item.customization.specialInstructions && (
-                                  <p className="text-amber-300 bg-amber-950/40 p-1.5 rounded mt-1 border border-amber-900/50">
+                                  <p className="text-amber-900 bg-amber-50 p-2 rounded-lg mt-1 border border-amber-200">
                                     <strong>Chef Instruction:</strong> "{item.customization.specialInstructions}"
                                   </p>
                                 )}
@@ -520,14 +522,14 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                     </div>
 
                     {/* Customer Delivery Details */}
-                    <div className="p-3 bg-stone-950 rounded-xl border border-stone-800 text-xs text-stone-300 space-y-1">
+                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200/80 text-xs text-stone-700 space-y-1">
                       <p>
-                        <strong>Address:</strong> {selectedOrder.customer.address}
+                        <strong className="text-stone-900">Address:</strong> {selectedOrder.customer.address}
                         {selectedOrder.customer.apartmentSuite ? `, Apt ${selectedOrder.customer.apartmentSuite}` : ''}, {selectedOrder.customer.city}
                       </p>
                       {selectedOrder.customer.deliveryNotes && (
-                        <p className="text-stone-400">
-                          <strong>Driver Note:</strong> "{selectedOrder.customer.deliveryNotes}"
+                        <p className="text-stone-500">
+                          <strong className="text-stone-700">Driver Note:</strong> "{selectedOrder.customer.deliveryNotes}"
                         </p>
                       )}
                     </div>
@@ -543,31 +545,31 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
 
         {/* View 2: Security Audit Logs */}
         {activeTab === 'logs' && (
-          <div className="bg-stone-900 rounded-2xl border border-stone-800 p-6 space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="bg-white rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgb(0,0,0,0.02)] p-6 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-stone-100">
               <div>
-                <h3 className="text-lg font-bold font-display text-white">Cryptographic Security Audit Log</h3>
-                <p className="text-xs text-stone-400">Records all terminal authentications, failed entries, and anti-fraud actions.</p>
+                <h3 className="text-lg font-bold font-display text-stone-900">Cryptographic Security Audit Log</h3>
+                <p className="text-xs text-stone-500">Records all terminal authentications, failed entries, and anti-fraud actions.</p>
               </div>
             </div>
 
-            <div className="divide-y divide-stone-800 border border-stone-800 rounded-xl overflow-hidden font-mono text-xs">
+            <div className="divide-y divide-stone-100 border border-stone-200/80 rounded-xl overflow-hidden font-mono text-xs">
               {securityLogs.length === 0 ? (
-                <div className="p-4 text-stone-500">No security events recorded yet.</div>
+                <div className="p-6 text-center text-stone-400">No security events recorded yet.</div>
               ) : (
                 securityLogs.map(log => (
-                  <div key={log.id} className="p-3 flex items-start justify-between gap-4 bg-stone-950 hover:bg-stone-900 transition-colors">
+                  <div key={log.id} className="p-3.5 flex items-start justify-between gap-4 bg-stone-50/50 hover:bg-stone-50 transition-colors">
                     <div>
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        log.action === 'LOGIN_SUCCESS' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
-                        log.action === 'LOCKOUT_TRIGGERED' ? 'bg-red-950 text-red-300 border border-red-800' :
-                        'bg-amber-950 text-amber-300 border border-amber-800'
+                        log.action === 'LOGIN_SUCCESS' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                        log.action === 'LOCKOUT_TRIGGERED' ? 'bg-red-50 text-red-700 border border-red-200' :
+                        'bg-amber-50 text-amber-800 border border-amber-200'
                       }`}>
                         {log.action}
                       </span>
-                      <p className="text-stone-300 text-xs mt-1 font-sans">{log.details}</p>
+                      <p className="text-stone-800 text-xs mt-1.5 font-sans font-medium">{log.details}</p>
                     </div>
-                    <span className="text-[10px] text-stone-500 shrink-0">
+                    <span className="text-[10px] text-stone-400 shrink-0">
                       {new Date(log.timestamp).toLocaleString()}
                     </span>
                   </div>
@@ -579,15 +581,15 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
 
         {/* View 3: Terminal Security Settings */}
         {activeTab === 'settings' && (
-          <div className="max-w-xl bg-stone-900 rounded-2xl border border-stone-800 p-6 space-y-6">
+          <div className="max-w-2xl bg-white rounded-2xl border border-stone-200/90 shadow-[0_2px_12px_rgb(0,0,0,0.02)] p-6 sm:p-8 space-y-6">
             <div>
-              <h3 className="text-lg font-bold font-display text-white">Staff Terminal Security Settings</h3>
-              <p className="text-xs text-stone-400">Change master kitchen passcode and configure staff protection.</p>
+              <h3 className="text-lg font-bold font-display text-stone-900">Staff Terminal Security Settings</h3>
+              <p className="text-xs text-stone-500">Change master kitchen passcode and configure staff protection.</p>
             </div>
 
             <form onSubmit={handleUpdatePin} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-stone-300 block mb-1">
+                <label className="text-xs font-semibold text-stone-700 block mb-1">
                   Change Master Kitchen PIN (4 to 6 digits)
                 </label>
                 <input
@@ -596,18 +598,18 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                   value={newPin}
                   onChange={e => setNewPin(e.target.value)}
                   placeholder="Enter new numeric PIN"
-                  className="w-full px-4 py-2.5 rounded-xl bg-stone-950 border border-stone-800 text-white font-mono text-sm focus:outline-none focus:border-amber-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-stone-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
                 />
-                <p className="text-[11px] text-stone-500 mt-1">
-                  Current active PIN is: <span className="font-mono text-stone-400">****</span>
+                <p className="text-[11px] text-stone-400 mt-1">
+                  Current active PIN is: <span className="font-mono text-stone-600 font-semibold">****</span>
                 </p>
               </div>
 
               {pinFeedback && (
                 <p className={`text-xs p-3 rounded-xl border ${
                   pinFeedback.startsWith('Error')
-                    ? 'bg-red-950/60 border-red-800 text-red-300'
-                    : 'bg-emerald-950/60 border-emerald-800 text-emerald-300'
+                    ? 'bg-red-50 border-red-200 text-red-700'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-700'
                 }`}>
                   {pinFeedback}
                 </p>
@@ -616,20 +618,20 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
               <button
                 type="submit"
                 disabled={!newPin}
-                className="py-2.5 px-5 bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs rounded-xl transition-colors disabled:opacity-40"
+                className="py-2.5 px-5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm active:scale-95 disabled:opacity-40 cursor-pointer"
               >
                 Update Staff PIN
               </button>
             </form>
 
             {/* Storefront Checkout & Anti-Scam Mode Switcher */}
-            <div className="pt-6 border-t border-stone-800 space-y-4">
+            <div className="pt-6 border-t border-stone-200 space-y-4">
               <div>
-                <h4 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-amber-500" />
+                <h4 className="text-sm font-bold text-stone-900 uppercase tracking-wider flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-orange-600" />
                   <span>Storefront Checkout &amp; Anti-Scam Mode</span>
                 </h4>
-                <p className="text-xs text-stone-400 mt-0.5">
+                <p className="text-xs text-stone-500 mt-0.5">
                   Choose how customer orders are received on the storefront. You can toggle between both modes to test:
                 </p>
               </div>
@@ -637,28 +639,28 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
               <div className="space-y-3">
                 {/* Option 1: Hybrid Mode (Visibly Blurred & Disabled when Mode 2 is Active) */}
                 {checkoutMode === 'whatsapp_only' ? (
-                  <div className="relative rounded-xl overflow-hidden border border-stone-800/80">
-                    <div className="filter blur-[1.5px] opacity-40 pointer-events-none p-4 bg-stone-950/60 select-none">
+                  <div className="relative rounded-2xl overflow-hidden border border-stone-200 bg-stone-50">
+                    <div className="filter blur-[1.5px] opacity-40 pointer-events-none p-4 select-none">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-bold text-amber-400">
+                        <span className="text-xs font-bold text-amber-800">
                           Mode 1: Hybrid (WhatsApp Primary + Web Order with Kitchen Approval)
                         </span>
                       </div>
-                      <p className="text-[11px] text-stone-400 leading-relaxed">
+                      <p className="text-[11px] text-stone-500 leading-relaxed">
                         Customer can order via WhatsApp OR submit order on the web. Web orders stay <strong>&quot;Awaiting Confirmation&quot;</strong> until you verify the money in CashApp/Zelle and click &quot;Confirm Payment &amp; Start Cooking&quot;.
                       </p>
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-between px-4 bg-stone-950/80 backdrop-blur-[0.5px]">
+                    <div className="absolute inset-0 flex items-center justify-between px-4 bg-stone-900/10 backdrop-blur-[0.5px]">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] uppercase font-bold bg-stone-800 text-stone-400 border border-stone-700 px-2 py-0.5 rounded font-mono">
+                        <span className="text-[10px] uppercase font-bold bg-white text-stone-600 border border-stone-200 px-2.5 py-0.5 rounded-full font-mono shadow-2xs">
                           Blurred &amp; Inactive (Mode 2 Active)
                         </span>
-                        <span className="text-xs text-stone-400">Direct web orders paused</span>
+                        <span className="text-xs text-stone-600 hidden sm:inline">Direct web orders paused</span>
                       </div>
                       <button
                         type="button"
                         onClick={() => setCheckoutMode('hybrid')}
-                        className="px-3 py-1 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 shadow transition-colors"
+                        className="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-orange-600 hover:bg-orange-700 text-white shadow-sm transition-colors cursor-pointer active:scale-95"
                       >
                         Activate Mode 1
                       </button>
@@ -668,15 +670,15 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                   <button
                     type="button"
                     onClick={() => setCheckoutMode('hybrid')}
-                    className="w-full p-4 rounded-xl border border-amber-500 bg-amber-950/40 text-white shadow-md text-left transition-all"
+                    className="w-full p-4 rounded-2xl border-2 border-amber-500 bg-amber-50/70 text-stone-900 shadow-sm text-left transition-all ring-1 ring-amber-500/20 cursor-pointer"
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-bold text-amber-400">
+                      <span className="text-xs font-bold text-amber-900">
                         Mode 1: Hybrid (WhatsApp Primary + Web Order with Kitchen Approval)
                       </span>
-                      <span className="text-[10px] uppercase font-bold bg-amber-500 text-stone-950 px-2 py-0.5 rounded font-mono">Active</span>
+                      <span className="text-[10px] uppercase font-bold bg-amber-600 text-white px-2 py-0.5 rounded-full font-mono shadow-2xs">Active</span>
                     </div>
-                    <p className="text-[11px] text-stone-300 leading-relaxed">
+                    <p className="text-[11px] text-stone-700 leading-relaxed">
                       Customer can order via WhatsApp OR submit order on the web. Web orders stay <strong>&quot;Awaiting Confirmation&quot;</strong> until you verify the money in CashApp/Zelle and click &quot;Confirm Payment &amp; Start Cooking&quot;.
                     </p>
                   </button>
@@ -686,45 +688,41 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                 <button
                   type="button"
                   onClick={() => setCheckoutMode('whatsapp_only')}
-                  className={`w-full p-4 rounded-xl border text-left transition-all ${
+                  className={`w-full p-4 rounded-2xl border text-left transition-all cursor-pointer ${
                     checkoutMode === 'whatsapp_only'
-                      ? 'bg-emerald-950/50 border-emerald-500 text-white shadow-lg ring-1 ring-emerald-500/50'
-                      : 'bg-stone-950/60 border-stone-800 text-stone-400 hover:border-stone-700'
+                      ? 'bg-emerald-50/70 border-2 border-emerald-500 text-stone-900 shadow-sm ring-1 ring-emerald-500/20'
+                      : 'bg-stone-50 border-stone-200 text-stone-600 hover:border-stone-300'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-emerald-400">
+                    <span className="text-xs font-bold text-emerald-800">
                       Mode 2: Mandatory WhatsApp &amp; Phone Only (Strict Scam-Proof &amp; Anti-Spam)
                     </span>
                     {checkoutMode === 'whatsapp_only' && (
-                      <span className="text-[10px] uppercase font-bold bg-emerald-500 text-stone-950 px-2 py-0.5 rounded font-mono">Active</span>
+                      <span className="text-[10px] uppercase font-bold bg-emerald-600 text-white px-2 py-0.5 rounded-full font-mono shadow-2xs">Active</span>
                     )}
                   </div>
-                  <p className="text-[11px] text-stone-300 leading-relaxed">
+                  <p className="text-[11px] text-stone-700 leading-relaxed">
                     Direct web ordering is disabled. $Cashtag is <strong>completely hidden from the web app</strong> to prevent spoofed payments and spam. Kitchen staff provides $Cashtag privately in WhatsApp after reviewing order details.
                   </p>
                 </button>
               </div>
             </div>
 
-
             {/* Staff Session & Log Out Section */}
-            <div className="pt-6 border-t border-stone-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="pt-6 border-t border-stone-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                  <LogOut className="w-4 h-4 text-red-400" />
+                <h4 className="text-sm font-bold text-stone-900 flex items-center gap-2">
+                  <LogOut className="w-4 h-4 text-red-600" />
                   <span>Active Staff Session</span>
                 </h4>
-                <p className="text-xs text-stone-400 mt-0.5">
-                  Logged in as <strong className="text-stone-300">{session.staffName}</strong>. End session when leaving the terminal.
+                <p className="text-xs text-stone-500 mt-0.5">
+                  Logged in as <strong className="text-stone-800">{session.staffName}</strong>. End session when leaving the terminal.
                 </p>
               </div>
               <button
                 type="button"
-                onClick={() => {
-                  clearStaffSession();
-                  onExit();
-                }}
+                onClick={handleLogout}
                 className="flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
               >
                 <LogOut className="w-3.5 h-3.5" />
@@ -732,10 +730,10 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
               </button>
             </div>
 
-            <div className="pt-4 border-t border-stone-800 text-xs text-stone-400 space-y-2">
-              <h4 className="font-bold text-white uppercase text-[11px]">How To Access Standalone Terminal</h4>
+            <div className="pt-4 border-t border-stone-200 text-xs text-stone-500 space-y-2">
+              <h4 className="font-bold text-stone-700 uppercase text-[11px]">How To Access Standalone Terminal</h4>
               <p>Bookmark this private URL on your phone or kitchen display:</p>
-              <div className="p-2.5 bg-stone-950 rounded-xl border border-stone-800 font-mono text-amber-300 text-[11px] select-all break-all">
+              <div className="p-3 bg-[#faf8f5] rounded-xl border border-stone-200 font-mono text-orange-700 text-[11px] select-all break-all shadow-2xs">
                 {window.location.origin}/?portal=staff
               </div>
             </div>
@@ -744,31 +742,31 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
 
       </div>
 
-      {/* Reject Modal */}
+      {/* Reject Scam Modal */}
       {showRejectModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-stone-900 border border-stone-800 rounded-2xl max-w-md w-full p-6 space-y-4">
-            <h3 className="text-lg font-bold text-white font-display">Flag & Reject Scam</h3>
-            <p className="text-xs text-stone-400">
-              Provide reason for rejecting order {showRejectModal}. This will be logged in the security audit trail.
+        <div className="fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white border border-stone-200 shadow-2xl rounded-2xl max-w-md w-full p-6 space-y-4 text-stone-900">
+            <h3 className="text-lg font-bold font-display text-stone-900">Flag &amp; Reject Scam</h3>
+            <p className="text-xs text-stone-500">
+              Provide reason for rejecting order <span className="font-mono font-bold text-stone-800">{showRejectModal}</span>. This will be logged in the security audit trail.
             </p>
             <input
               type="text"
               value={rejectReason}
               onChange={e => setRejectReason(e.target.value)}
               placeholder="e.g. Duplicate reference # detected, or funds not received in Zelle"
-              className="w-full px-3 py-2 text-xs border border-stone-700 bg-stone-950 text-white rounded-xl focus:outline-none"
+              className="w-full px-3.5 py-2.5 text-xs border border-stone-200 bg-stone-50 text-stone-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
             />
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 pt-1">
               <button
                 onClick={() => setShowRejectModal(null)}
-                className="px-3 py-1.5 text-xs text-stone-400 hover:text-white"
+                className="px-3.5 py-2 text-xs font-semibold text-stone-600 hover:text-stone-900 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleRejectFraud(showRejectModal)}
-                className="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-xl"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
               >
                 Confirm Scam Rejection
               </button>
