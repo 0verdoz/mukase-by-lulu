@@ -1,6 +1,6 @@
 import { ChefHat, ShieldCheck, Phone, MapPin, Clock } from 'lucide-react';
 import { useOrder } from '../context/OrderContext';
-import { LULU_PHONE_DISPLAY, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
+import { LULU_PHONE_DISPLAY, LULU_WHATSAPP_DISPLAY, LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT } from '../utils/checkout';
 
 export const Footer: React.FC = () => {
   const { setCurrentView, openLegalModal, checkoutMode } = useOrder();
@@ -48,7 +48,8 @@ export const Footer: React.FC = () => {
               ) : (
                 <p>Cash App: <strong className="text-white">{LULU_CASHAPP_TAG}</strong></p>
               )}
-              <p>WhatsApp / Orders: <strong className="text-white">{LULU_PHONE_DISPLAY}</strong></p>
+              <p>WhatsApp: <strong className="text-white">{LULU_WHATSAPP_DISPLAY}</strong></p>
+              <p>Voice / Calls: <strong className="text-white">{LULU_PHONE_DISPLAY}</strong></p>
             </div>
           </div>
 

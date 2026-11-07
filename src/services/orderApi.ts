@@ -27,6 +27,23 @@ export async function checkServerHealth(): Promise<boolean> {
 /**
  * Fetch all orders from the shared sync server
  */
+
+/**
+ * Clear all daily orders and reset ledger on the shared sync server
+ */
+export async function clearRemoteOrders(): Promise<boolean> {
+  if (!API_BASE) return false;
+  try {
+    const res = await fetch(`${API_BASE}/orders`, {
+      method: 'DELETE',
+      signal: AbortSignal.timeout(3000),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function fetchRemoteOrders(): Promise<Order[] | null> {
   if (!API_BASE) return null;
   try {
@@ -152,6 +169,7 @@ export async function updateRemoteSettings(settings: Partial<AppSettings>): Prom
 export function subscribeToSyncStream(callbacks: {
   onOrderCreated?: (order: Order) => void;
   onOrderUpdated?: (order: Order) => void;
+  onOrdersCleared?: () => void;
   onSettingsUpdated?: (settings: AppSettings) => void;
   onStatusChange?: (connected: boolean) => void;
 }): () => void {
@@ -177,6 +195,8 @@ export function subscribeToSyncStream(callbacks: {
           const payload = JSON.parse(event.data);
           if (payload.type === 'order_created' && payload.order) {
             callbacks.onOrderCreated?.(payload.order);
+          } else if (payload.type === 'orders_cleared') {
+            callbacks.onOrdersCleared?.();
           } else if (payload.type === 'order_updated' && payload.order) {
             callbacks.onOrderUpdated?.(payload.order);
           } else if (payload.type === 'settings_updated' && payload.settings) {

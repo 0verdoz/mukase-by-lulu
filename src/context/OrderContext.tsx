@@ -3,6 +3,7 @@ import { CartItem, CustomerDetails, MenuItem, Order, OrderStatus, SelectedCustom
 import { generateOrderCode, LULU_CASHAPP_TAG } from '../utils/checkout';
 import {
   fetchRemoteOrders,
+  clearRemoteOrders,
   pushRemoteOrder,
   updateRemoteOrderStatus,
   submitRemotePaymentProof,
@@ -41,6 +42,7 @@ interface OrderContextType {
     rawText?: string;
   }) => { success: boolean; message: string; score: number };
   updateOrderStatus: (orderId: string, newStatus: OrderStatus, riderNotes?: string) => void;
+  clearAllOrders: () => Promise<void>;
   findOrderById: (orderId: string) => Order | undefined;
 
   // Lulu Concierge Chat
@@ -273,9 +275,9 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [trackingOrderId, setTrackingOrderId] = useState<string>('MUK-4821');
   const [checkoutMode, setCheckoutModeState] = useState<'hybrid' | 'whatsapp_only'>(() => {
     try {
-      return (localStorage.getItem('mukase_checkout_mode') as 'hybrid' | 'whatsapp_only') || 'hybrid';
+      return (localStorage.getItem('mukase_checkout_mode') as 'hybrid' | 'whatsapp_only') || 'whatsapp_only';
     } catch {
-      return 'hybrid';
+      return 'whatsapp_only';
     }
   });
 
@@ -290,6 +292,22 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     } catch {}
     updateRemoteSettings({ checkoutMode: mode }).catch(() => {});
+  };
+
+  const clearAllOrders = async () => {
+    try {
+      await clearRemoteOrders();
+    } catch {}
+    setOrders([]);
+    setActiveOrder(null);
+    try {
+      localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify([]));
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const bc = new BroadcastChannel('mukase_sync_channel');
+        bc.postMessage({ type: 'ORDERS_CLEARED' });
+        bc.close();
+      }
+    } catch {}
   };
 
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -348,12 +366,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Fetch latest remote orders on mount
     fetchRemoteOrders().then(remoteOrders => {
-      if (isMounted && remoteOrders && remoteOrders.length > 0) {
-        setOrders(prev => {
-          const remoteIds = new Set(remoteOrders.map(r => r.id));
-          const uniqueLocals = prev.filter(l => !remoteIds.has(l.id));
-          return [...remoteOrders, ...uniqueLocals];
-        });
+      if (isMounted && remoteOrders !== null) {
+        setOrders(remoteOrders);
       }
     });
 
@@ -364,7 +378,10 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         bc = new BroadcastChannel('mukase_sync_channel');
         bc.onmessage = (event) => {
           if (!isMounted) return;
-          if (event.data?.type === 'CHECKOUT_MODE_CHANGED' && event.data.mode) {
+          if (event.data?.type === 'ORDERS_CLEARED') {
+            setOrders([]);
+            setActiveOrder(null);
+          } else if (event.data?.type === 'CHECKOUT_MODE_CHANGED' && event.data.mode) {
             setCheckoutModeState(event.data.mode);
           }
         };
@@ -389,12 +406,8 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       }).catch(() => {});
       fetchRemoteOrders().then(remoteOrders => {
-        if (isMounted && remoteOrders && remoteOrders.length > 0) {
-          setOrders(prev => {
-            const remoteIds = new Set(remoteOrders.map(r => r.id));
-            const uniqueLocals = prev.filter(l => !remoteIds.has(l.id));
-            return [...remoteOrders, ...uniqueLocals];
-          });
+        if (isMounted && remoteOrders !== null) {
+          setOrders(remoteOrders);
         }
       }).catch(() => {});
     };
@@ -413,6 +426,14 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           if (prev.some(o => o.id === newOrder.id)) return prev;
           return [newOrder, ...prev];
         });
+      },
+      onOrdersCleared: () => {
+        if (!isMounted) return;
+        setOrders([]);
+        setActiveOrder(null);
+        try {
+          localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify([]));
+        } catch {}
       },
       onOrderUpdated: (updatedOrder) => {
         if (!isMounted) return;
@@ -699,6 +720,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         createOrder,
         submitPaymentProof,
         updateOrderStatus,
+        clearAllOrders,
         findOrderById,
         chatMessages,
         sendUserMessage,

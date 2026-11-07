@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, ShieldCheck, FileText, CheckCircle2, AlertTriangle, Lock, Eye, RefreshCw } from 'lucide-react';
-import { LULU_CASHAPP_TAG, LULU_PHONE_DISPLAY, LULU_ZELLE_CONTACT } from '../utils/checkout';
+import { LULU_CASHAPP_TAG, LULU_PHONE_DISPLAY, LULU_WHATSAPP_DISPLAY, LULU_ZELLE_CONTACT } from '../utils/checkout';
 
 interface LegalModalProps {
   isOpen: boolean;
@@ -152,7 +152,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({
                   5. Data Retention & Deletion
                 </h3>
                 <p>
-                  Delivery records and contact details are archived temporarily for order fulfillment, customer resolution, and internal kitchen recordkeeping. You may request deletion of your saved customer profile by contacting Chef Lulu directly on WhatsApp at <strong>{LULU_PHONE_DISPLAY}</strong> or via email.
+                  Delivery records and contact details are archived temporarily for order fulfillment, customer resolution, and internal kitchen recordkeeping. You may request deletion of your saved customer profile by contacting Chef Lulu directly on WhatsApp at <strong>{LULU_WHATSAPP_DISPLAY}</strong> or phone at <strong>{LULU_PHONE_DISPLAY}</strong> or via email.
                 </p>
               </section>
             </>

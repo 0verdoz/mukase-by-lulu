@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, AlertTriangle, CheckCircle2, Clock, ChefHat, Bike, 
   DollarSign, Filter, RefreshCw, XCircle, Volume2, VolumeX, LogOut, 
-  Lock, Copy, Check, ExternalLink, Settings, History, Phone, MessageSquare 
+  Lock, Copy, Check, ExternalLink, Settings, History, Phone, MessageSquare, Trash2 
 } from 'lucide-react';
 import { useOrder } from '../context/OrderContext';
 import { Order, OrderStatus } from '../types';
@@ -16,12 +16,13 @@ interface Props {
 }
 
 export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
-  const { orders, updateOrderStatus, submitPaymentProof, checkoutMode, setCheckoutMode } = useOrder();
+  const { orders, updateOrderStatus, submitPaymentProof, checkoutMode, setCheckoutMode, clearAllOrders } = useOrder();
   const [filterStatus, setFilterStatus] = useState<'all' | OrderStatus>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(orders[0] || null);
   const [activeTab, setActiveTab] = useState<'orders' | 'logs' | 'settings'>('orders');
   const [copiedLink, setCopiedLink] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Reject modal
   const [showRejectModal, setShowRejectModal] = useState<string | null>(null);
@@ -41,6 +42,15 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
   const pendingCount = orders.filter(o => o.status === 'pending_payment').length;
   const cookingCount = orders.filter(o => o.status === 'preparing_in_kitchen').length;
   const deliveryCount = orders.filter(o => o.status === 'out_for_delivery').length;
+
+  
+  useEffect(() => {
+    if (orders.length === 0) {
+      setSelectedOrder(null);
+    } else if (!selectedOrder || !orders.some(o => o.id === selectedOrder.id)) {
+      setSelectedOrder(orders[0]);
+    }
+  }, [orders]);
 
   const filteredOrders = orders.filter(o => {
     if (filterStatus === 'all') return true;
@@ -245,7 +255,8 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
             </div>
 
             {/* Filter Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-stone-200/60 rounded-2xl border border-stone-200/80 scrollbar-none">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 overflow-x-auto p-1.5 bg-stone-200/60 rounded-2xl border border-stone-200/80 scrollbar-none flex-1">
               {[
                 { id: 'all', label: `All Orders (${orders.length})` },
                 { id: 'pending_payment', label: `Awaiting Verification (${pendingCount})` },
@@ -265,6 +276,17 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
                 </button>
               ))}
             </div>
+
+            <button
+              type="button"
+              onClick={() => setShowClearConfirm(true)}
+              className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 shadow-xs transition-colors shrink-0 cursor-pointer"
+              title="Clear all orders and reset revenue ledger for a new shift"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Clear Daily Orders &amp; Reset Ledger</span>
+            </button>
+          </div>
 
             {/* Split Screen Table & Details */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -775,6 +797,43 @@ export const StandaloneStaffPortal: React.FC<Props> = ({ session, onExit }) => {
         </div>
       )}
 
-    </div>
+    
+      {/* Clear Orders Confirmation Modal */}
+      {showClearConfirm && (
+        <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 border border-red-200 text-red-600 flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold text-stone-900 font-display">Clear Daily Shift &amp; Reset Ledger?</h3>
+              <p className="text-xs text-stone-600 leading-relaxed">
+                This will wipe all active and completed customer orders for the day, reset total revenue to $0.00, and synchronize across all kitchen staff terminals worldwide.
+              </p>
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-stone-100">
+              <button
+                type="button"
+                onClick={() => setShowClearConfirm(false)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  await clearAllOrders();
+                  setSelectedOrder(null);
+                  setShowClearConfirm(false);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 shadow-md shadow-red-600/20 transition-all cursor-pointer"
+              >
+                Yes, Clear All Orders &amp; Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+</div>
   );
 };

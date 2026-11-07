@@ -7,7 +7,7 @@ import { useOrder } from '../context/OrderContext';
 type CategoryFilter = 'all' | MenuCategory;
 
 const CATEGORIES: { id: CategoryFilter; label: string }[] = [
-  { id: 'all', label: 'All Dishes (26)' },
+  { id: 'all', label: `All Dishes (${MENU_ITEMS.length})` },
   { id: 'jollof', label: 'Smoky Jollof' },
   { id: 'banku-fufu', label: 'Banku, Fufu & Acheke' },
   { id: 'soups-stews', label: 'Soups, Waakye & Red Red' },
@@ -197,7 +197,7 @@ export const MenuSection: React.FC = () => {
                       {isCustomizable && (
                         <div className="mt-1.5 flex items-center gap-1 text-[11px] text-amber-800 font-medium">
                           <SlidersHorizontal className="w-3 h-3 text-amber-700 shrink-0" />
-                          <span className="truncate">Choice of Swallow</span>
+                          <span className="truncate">{item.sidesLabel ? item.sidesLabel : item.proteinLabel ? item.proteinLabel : 'Customizable Options'}</span>
                         </div>
                       )}
                     </div>

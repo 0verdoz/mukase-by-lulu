@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, ChefHat, ShieldCheck, ArrowRight, CornerDownLeft, Sparkles } from 'lucide-react';
 import { useOrder } from '../context/OrderContext';
-import { LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT, LULU_PHONE_NUMBER, LULU_PHONE_DISPLAY } from '../utils/checkout';
+import { LULU_CASHAPP_TAG, LULU_ZELLE_CONTACT, LULU_PHONE_NUMBER, LULU_PHONE_DISPLAY, LULU_WHATSAPP_USERNAME, LULU_WHATSAPP_DISPLAY } from '../utils/checkout';
 
 export const LuluConciergeChat: React.FC = () => {
   const { isChatOpen, setIsChatOpen, chatMessages, sendUserMessage, setCurrentView, setTrackingOrderId, setIsStoryOpen } = useOrder();
@@ -160,7 +160,7 @@ export const LuluConciergeChat: React.FC = () => {
         <div className="mt-2 flex items-center justify-between text-[10px] text-stone-400">
           <span>Official line: {LULU_PHONE_DISPLAY}</span>
           <a
-            href={`https://wa.me/${LULU_PHONE_NUMBER}`}
+            href={`https://wa.me/${LULU_WHATSAPP_USERNAME}`}
             target="_blank"
             rel="noreferrer"
             className="text-emerald-700 hover:underline font-semibold"

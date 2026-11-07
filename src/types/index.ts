@@ -25,7 +25,9 @@ export interface MenuItem {
   tag?: string;
   spicyLevel?: number; // 0 to 3
   isCustomizable?: boolean;
+  sidesLabel?: string;
   sidesOptions?: { name: string; extraPrice: number }[];
+  proteinLabel?: string;
   proteinOptions?: { name: string; extraPrice: number }[];
   availableAddOns?: CustomizationOption[];
 }

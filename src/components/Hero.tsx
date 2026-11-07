@@ -19,17 +19,17 @@ export const Hero: React.FC = () => {
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-800">
               <span>Authentic West African Kitchen</span>
               <span aria-hidden="true">·</span>
-              <span>Accra to Atlanta</span>
+              <span>ACCRA TO GEORGIA</span>
               <span aria-hidden="true">·</span>
               <span>Fresh Daily Batches</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-900 tracking-tight leading-[1.1] font-display text-balance">
-              The heat of the Ghanaian kitchen, delivered to your door.
+              The heat of Africa, delivered to your door.
             </h1>
 
             <p className="text-base sm:text-lg text-stone-600 leading-relaxed max-w-xl">
-              Smoky jollof with goat meat or wings, authentic banku with rich okro soup, pounded fufu with goat light soup, and fried yam with crispy peppered fish. Custom foods and off-menu orders prepared fresh to order.
+              Smoky jollof with goat meat or wings, authentic banku with rich okro soup, pounded fufu with goat light soup, and crispy fried yam with wings or goat. Custom foods and off-menu orders prepared fresh to order.
             </p>
 
             {/* Action Buttons */}

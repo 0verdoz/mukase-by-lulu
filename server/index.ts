@@ -300,6 +300,19 @@ setInterval(() => {
 }, 25000);
 
 // 3. Orders API
+
+app.delete('/api/orders', (_req: Request, res: Response) => {
+  orders = [];
+  broadcast({ type: 'orders_cleared' });
+  res.json({ success: true, message: 'All daily orders and ledger cleared' });
+});
+
+app.post('/api/orders/clear', (_req: Request, res: Response) => {
+  orders = [];
+  broadcast({ type: 'orders_cleared' });
+  res.json({ success: true, message: 'All daily orders and ledger cleared' });
+});
+
 app.get('/api/orders', (_req: Request, res: Response) => {
   res.json({ orders });
 });
@@ -402,7 +415,7 @@ app.post('/api/orders/:id/proof', (req: Request, res: Response) => {
 
 // App Settings (Checkout Mode: 'hybrid' | 'whatsapp_only')
 let appSettings = {
-  checkoutMode: 'hybrid' as 'hybrid' | 'whatsapp_only',
+  checkoutMode: 'whatsapp_only' as 'hybrid' | 'whatsapp_only',
 };
 
 app.get('/api/settings', (_req: Request, res: Response) => {

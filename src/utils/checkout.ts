@@ -1,10 +1,14 @@
 import { CartItem, CustomerDetails, Order } from '../types';
 
-export const LULU_PHONE_NUMBER = '13477067462'; // Lulu's official business WhatsApp/SMS line
-export const LULU_PHONE_DISPLAY = '+1 (347) 706-7462'; // Formatted display for UI text
+export const LULU_VOICE_NUMBER = '17067508624'; // Official kitchen phone line (Google Voice)
+export const LULU_PHONE_DISPLAY = '(706) 750-8624'; // Publicly displayed kitchen phone number
+export const LULU_PHONE_NUMBER = '17067508624'; // Primary line for calls & SMS
+export const LULU_WHATSAPP_USERNAME = 'Mukase_by_Lulu'; // Reserved WhatsApp username
+export const LULU_WHATSAPP_DISPLAY = '@Mukase_by_Lulu'; // Public WhatsApp handle
+export const LULU_WHATSAPP_NUMBER = '13477067462'; // Private WhatsApp routing number
 export const LULU_CASHAPP_TAG = '$KingPilato';
-export const LULU_ZELLE_CONTACT = 'orders@mukasebylulu.com (347-706-7462)';
-export const LULU_APPLE_CASH = '13477067462';
+export const LULU_ZELLE_CONTACT = 'orders@mukasebylulu.com';
+export const LULU_APPLE_CASH = '17067508624';
 
 /**
  * Generate a unique 6-character order tracking code
@@ -109,7 +113,8 @@ Please include your exact Order Code *${id}* in your payment memo/note so Chef L
  */
 export function getWhatsAppUrl(order: Order, checkoutMode: 'hybrid' | 'whatsapp_only' = 'hybrid'): string {
   const message = formatOrderMessage(order, checkoutMode);
-  return `https://wa.me/${LULU_PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
+  // WhatsApp username URL completely hides the underlying +1(347) phone number from browser address bars & links
+  return `https://wa.me/${LULU_WHATSAPP_USERNAME}?text=${encodeURIComponent(message)}`;
 }
 
 /**
@@ -119,7 +124,7 @@ export function getWhatsAppUrl(order: Order, checkoutMode: 'hybrid' | 'whatsapp_
 export function getSmsUrl(order: Order, isAppleDevice: boolean = false, checkoutMode: 'hybrid' | 'whatsapp_only' = 'hybrid'): string {
   const message = formatOrderMessage(order, checkoutMode);
   const separator = isAppleDevice ? '&' : '?';
-  return `sms:${LULU_PHONE_NUMBER}${separator}body=${encodeURIComponent(message)}`;
+  return `sms:${LULU_VOICE_NUMBER}${separator}body=${encodeURIComponent(message)}`;
 }
 
 /**
