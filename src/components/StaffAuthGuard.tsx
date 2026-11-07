@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Lock, ShieldCheck, AlertTriangle, KeyRound, ArrowLeft, Clock, Eye, EyeOff } from 'lucide-react';
 import { authenticateStaff, getCurrentStaffSession, getLockoutRemainingSeconds, DEFAULT_MASTER_PIN, StaffSession, clearStaffSession } from '../utils/staffAuth';
 import { SteamPotIcon } from './SteamPotIcon';
@@ -14,6 +14,15 @@ export const StaffAuthGuard: React.FC<Props> = ({ children, onExitToStore }) => 
   const [errorMsg, setErrorMsg] = useState('');
   const [lockoutSecs, setLockoutSecs] = useState<number>(() => getLockoutRemainingSeconds());
   const [showPin, setShowPin] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  
+  // Auto-focus input on load and when session clears
+  useEffect(() => {
+    if (!session) {
+      inputRef.current?.focus();
+    }
+  }, [session]);
 
   // Global listener for immediate logout synchronization across components
   useEffect(() => {
@@ -48,11 +57,8 @@ export const StaffAuthGuard: React.FC<Props> = ({ children, onExitToStore }) => 
     window.dispatchEvent(new Event('mukase_staff_logout'));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!pin.trim()) return;
-
-    const res = authenticateStaff(pin);
+  const verifyPin = (candidatePin: string) => {
+    const res = authenticateStaff(candidatePin);
     if (res.success && res.session) {
       setSession(res.session);
       setErrorMsg('');
@@ -62,11 +68,58 @@ export const StaffAuthGuard: React.FC<Props> = ({ children, onExitToStore }) => 
       const remaining = getLockoutRemainingSeconds();
       if (remaining > 0) setLockoutSecs(remaining);
       setPin('');
+      inputRef.current?.focus();
     }
+  };
+
+  // Global physical keyboard listener (captures 0-9, Backspace, Enter, Esc from anywhere)
+  useEffect(() => {
+    if (session || lockoutSecs > 0) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept browser shortcuts (Ctrl+R, Ctrl+Shift+I, etc.)
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      if (/^[0-9]$/.test(e.key)) {
+        e.preventDefault();
+        setPin(prev => {
+          if (prev.length >= 6) return prev;
+          const next = prev + e.key;
+          if (next.length === 4) {
+            setTimeout(() => verifyPin(next), 40);
+          }
+          return next;
+        });
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        setPin(prev => prev.slice(0, -1));
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        setPin('');
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        setPin(currentPin => {
+          if (currentPin.trim()) {
+            verifyPin(currentPin);
+          }
+          return currentPin;
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [session, lockoutSecs]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pin.trim()) return;
+    verifyPin(pin);
   };
 
   const handleKeypadPress = (val: string) => {
     if (lockoutSecs > 0) return;
+    inputRef.current?.focus();
     if (val === 'CLEAR') {
       setPin('');
     } else if (val === 'BACK') {
@@ -75,13 +128,7 @@ export const StaffAuthGuard: React.FC<Props> = ({ children, onExitToStore }) => 
       const newPin = pin + val;
       setPin(newPin);
       if (newPin.length === 4) {
-        // Auto submit on 4 digits
-        const res = authenticateStaff(newPin);
-        if (res.success && res.session) {
-          setSession(res.session);
-          setErrorMsg('');
-          setPin('');
-        }
+        verifyPin(newPin);
       }
     }
   };
@@ -162,10 +209,20 @@ export const StaffAuthGuard: React.FC<Props> = ({ children, onExitToStore }) => 
             {/* Hidden / Manual Input for desktop keyboard users */}
             <div className="relative">
               <input
+                ref={inputRef}
+                autoFocus
                 type={showPin ? 'text' : 'password'}
+                inputMode="numeric"
+                pattern="[0-9]*"
                 maxLength={6}
                 value={pin}
-                onChange={e => setPin(e.target.value)}
+                onChange={e => {
+                  const cleaned = e.target.value.replace(/\D/g, '').slice(0, 6);
+                  setPin(cleaned);
+                  if (cleaned.length === 4) {
+                    verifyPin(cleaned);
+                  }
+                }}
                 placeholder="Enter 4-digit PIN"
                 className="w-full text-center tracking-widest font-mono text-lg px-4 py-2.5 rounded-xl bg-stone-50 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-stone-900 placeholder:text-stone-400"
               />
