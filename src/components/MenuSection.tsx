@@ -187,17 +187,12 @@ export const MenuSection: React.FC = () => {
                         {item.name}
                       </h3>
 
-                      {/* Only custom dishes show description & swallow hint */}
-                      {isCustomizable && item.description && (
-                        <p className="text-[11px] text-stone-500 line-clamp-2 mt-1 leading-relaxed">
-                          {item.description}
-                        </p>
-                      )}
+
 
                       {isCustomizable && (
                         <div className="mt-1.5 flex items-center gap-1 text-[11px] text-amber-800 font-medium">
                           <SlidersHorizontal className="w-3 h-3 text-amber-700 shrink-0" />
-                          <span className="truncate">{item.sidesLabel ? item.sidesLabel : item.proteinLabel ? item.proteinLabel : 'Customizable Options'}</span>
+                          <span className="truncate">{item.sidesLabel && item.proteinLabel ? `${item.sidesLabel} & ${item.proteinLabel}` : (item.sidesLabel || item.proteinLabel || 'Customizable Options')}</span>
                         </div>
                       )}
                     </div>

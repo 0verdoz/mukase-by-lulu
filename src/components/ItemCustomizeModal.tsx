@@ -129,7 +129,7 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
               )}
             </div>
             <h3 className="text-xl sm:text-2xl font-bold font-display">{item.name}</h3>
-            <p className="text-xs sm:text-sm text-stone-200 line-clamp-1">{item.description}</p>
+            
           </div>
         </div>
 
@@ -195,7 +195,7 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-stone-900 font-display">
-                  1. {item.sidesLabel ? item.sidesLabel.replace(/^\d+\.\s*/, '') : 'Choice of Side / Swallow'} <span className="text-amber-700">*</span>
+                  1. {item.sidesLabel || 'Choice of Side / Swallow'} <span className="text-amber-700">*</span>
                 </label>
                 <span className="text-xs text-stone-500">Included in base price</span>
               </div>
@@ -232,7 +232,7 @@ export const ItemCustomizeModal: React.FC<Props> = ({ item, onClose }) => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-bold text-stone-900 font-display">
-                  {item.sidesOptions ? `2. ${item.proteinLabel ? item.proteinLabel.replace(/^\d+\.\s*/, '') : 'Meat / Protein Upgrade'}` : `1. ${item.proteinLabel ? item.proteinLabel.replace(/^\d+\.\s*/, '') : 'Protein Choice'}`}
+                  {item.sidesOptions ? `2. ${item.proteinLabel || 'Meat / Protein'}` : `1. ${item.proteinLabel || 'Choice of Protein'}`}
                 </label>
                 <span className="text-xs text-stone-500">Custom options</span>
               </div>
